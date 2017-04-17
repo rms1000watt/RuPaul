@@ -1,0 +1,71 @@
+Version: v0.1.0
+
+Data:
+  - Name: first_name
+    Type: string
+    Default: 
+    Required: false
+    Encrypted: false
+    Hashed: false
+    MaxLength: 50
+    MinLength: 0
+    MustHaveChars:
+    CantHaveChars:
+    OnlyHaveChars:
+  - Name: middle_name
+  - Name: last_name
+
+DAL:
+  - Name: postgres-1
+    Type: Postgres
+    URL: http://localhost:8181/
+    Password: postgres
+
+API:
+  - Name: rest-1
+    Type: REST
+    Serialization: JSON
+    Middlewares: 
+      - Logging
+      - Authentication
+      - CSRF
+    Paths:
+      - Name: /person
+        Inputs:
+        - first_name
+        - middle_name
+        - last_name
+        DAL: postgres-1
+        Methods:
+        - Options
+        - Get
+        - Post
+        Outputs:
+        - first_name
+        - middle_name
+
+CommandLine:
+  AppName: "Tester"
+  AppShortDescription:  
+  AppLongDescription:
+  GlobalArgs:
+    - Name: verbose
+      Description:
+      ShortName: v
+      Type: bool
+      Default: false
+  Commands:
+    - Name: serve
+      ShortDescription:
+      LongDescription:
+      API: rest-1
+      Args: 
+      - Name: host
+        Type: string
+        Default: 0.0.0.0
+        Description: Host address for server
+      - Name: port
+        Type: int
+        Default: 8080
+        Description: Port for server
+    - Name: version
