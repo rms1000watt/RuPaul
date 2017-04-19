@@ -9,9 +9,9 @@ import (
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "{{.CommandLine.AppName}}",
-	Short: "{{.CommandLine.AppShortDescription}}",
-	Long:  `{{.CommandLine.AppLongDescription}}`,
+	Use:   "RygenTest",
+	Short: "First Rygen Test app",
+	Long:  `This is a Rygen Test app. This is just to test the functionality.`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.

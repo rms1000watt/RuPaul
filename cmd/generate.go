@@ -11,15 +11,15 @@ import (
 )
 
 var (
-	cfg         = &Config{}
-	generateCmd = &cobra.Command{
+	configFilePath = ""
+	generateCmd    = &cobra.Command{
 		Use:   "generate",
 		Short: "Generates code from a `rygen.yml` file",
 		Long:  `Generates code from a "rygen.yml" file`,
 		Run: func(cmd *cobra.Command, args []string) {
 			genCfg := generate.Config{}
 
-			fileBytes, err := ioutil.ReadFile(cfg.ConfigFilePath)
+			fileBytes, err := ioutil.ReadFile(configFilePath)
 			if err != nil {
 				fmt.Println("Failed reading config:", err)
 				return
@@ -38,5 +38,5 @@ var (
 func init() {
 	RootCmd.AddCommand(generateCmd)
 
-	generateCmd.Flags().StringVarP(&cfg.ConfigFilePath, "config-file", "f", "./rygen.yml", "Config File Path of the RyGen YAML")
+	generateCmd.Flags().StringVarP(&configFilePath, "config-file", "f", "./rygen.yml", "Config File Path of the RyGen YAML")
 }

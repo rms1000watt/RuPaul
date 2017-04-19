@@ -1,4 +1,5 @@
 Version: v0.1.0
+MainImportPath: github.com/rms1000watt/rygen-test
 
 Data:
   - Name: first_name
@@ -45,9 +46,9 @@ API:
         - middle_name
 
 CommandLine:
-  AppName: "Tester"
-  AppShortDescription:  
-  AppLongDescription:
+  AppName: "RygenTest"
+  AppShortDescription: First Rygen Test app
+  AppLongDescription: This is a Rygen Test app. This is just to test the functionality.
   GlobalArgs:
     - Name: verbose
       Description:

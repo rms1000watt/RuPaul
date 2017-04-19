@@ -1,11 +1,12 @@
 package generate
 
 type Config struct {
-	Version string `yaml:"Version"`
-	Datas   []Data `yaml:"Data"`
+	Version        string `yaml:"Version"`
+	MainImportPath string `yaml:"MainImportPath"`
+	Datas          []Data `yaml:"Data"`
 	// DALs        []DAL       `yaml:"DAL"`
 	// APIs        []API       `yaml:"API"`
-	// CommandLine CommandLine `yaml:"CommandLine"`
+	CommandLine CommandLine `yaml:"CommandLine"`
 }
 
 type Data struct {
@@ -20,4 +21,27 @@ type Data struct {
 	MustHaveChars string `yaml:"MustHaveChars"`
 	CantHaveChars string `yaml:"CantHaveChars"`
 	OnlyHaveChars string `yaml:"OnlyHaveChars"`
+}
+
+type CommandLine struct {
+	AppName             string    `yaml:"AppName"`
+	AppShortDescription string    `yaml:"AppShortDescription"`
+	AppLongDescription  string    `yaml:"AppLongDescription"`
+	GlobalArgs          []Arg     `yaml:"GlobalArgs"`
+	Commands            []Command `yaml:"Commands"`
+}
+
+type Arg struct {
+	Name        string      `yaml:"Name"`
+	Description string      `yaml:"Description"`
+	ShortName   string      `yaml:"ShortName"`
+	Type        string      `yaml:"Type"`
+	Default     interface{} `yaml:"Default"`
+}
+
+type Command struct {
+	Name             string `yaml:"Name"`
+	ShortDescription string `yaml:"ShortDescription"`
+	LongDescription  string `yaml:"LongDescription"`
+	Args             []Arg  `yaml:"Args"`
 }
