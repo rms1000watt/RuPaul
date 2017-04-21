@@ -55,6 +55,11 @@ CommandLine:
       ShortName: v
       Type: bool
       Default: false
+    - Name: url
+      Description:
+      ShortName: u
+      Type: string
+      Default: http://www.google.com
   Commands:
     - Name: serve
       ShortDescription:

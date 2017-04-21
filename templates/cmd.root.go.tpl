@@ -7,6 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
+{{template "cmd.root.globalArgs.tpl"}}
+
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
 	Use:   "{{.CommandLine.AppName}}",
