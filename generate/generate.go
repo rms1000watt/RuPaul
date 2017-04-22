@@ -28,9 +28,12 @@ var (
 type Template struct {
 	TemplateName string
 	FileName     string
+	Data         interface{}
 }
 
 func Generate(cfg Config) {
+	// TODO: Validate cfg so we don't have to ToLower everywhere in template
+
 	fmt.Println("Config:", cfg)
 
 	if err := os.Mkdir(dirOut, os.ModePerm); err != nil {
@@ -45,7 +48,7 @@ func Generate(cfg Config) {
 
 	templates := getTemplates(cfg)
 	for _, tpl := range templates {
-		if err := genFile(cfg, tpl, helperFileNames); err != nil {
+		if err := genFile(tpl, helperFileNames); err != nil {
 			fmt.Println("Failed generating template:", tpl.TemplateName, ":", err)
 		}
 	}
@@ -63,6 +66,7 @@ func getTemplates(cfg Config) (templates []Template) {
 		templates = append(templates, Template{
 			TemplateName: singleTemplateName,
 			FileName:     singleTemplateName,
+			Data:         cfg,
 		})
 	}
 
@@ -70,6 +74,7 @@ func getTemplates(cfg Config) (templates []Template) {
 		templates = append(templates, Template{
 			TemplateName: "cmd." + strings.ToLower(command.Name) + ".go.tpl",
 			FileName:     "cmd.command.go.tpl",
+			Data:         command,
 		})
 	}
 
@@ -88,7 +93,7 @@ func getHelperFileNames() (helperFileNames []string, err error) {
 	return
 }
 
-func genFile(cfg Config, tpl Template, helperFileNames []string) (err error) {
+func genFile(tpl Template, helperFileNames []string) (err error) {
 	templateName := tpl.TemplateName
 
 	templateNameArr := strings.Split(templateName, ".")
@@ -132,7 +137,7 @@ func genFile(cfg Config, tpl Template, helperFileNames []string) (err error) {
 	}
 
 	var outBuffer bytes.Buffer
-	if err := t.Execute(&outBuffer, cfg); err != nil {
+	if err := t.Execute(&outBuffer, tpl.Data); err != nil {
 		fmt.Println("Failed executing template:", err)
 		return errGenFail
 	}

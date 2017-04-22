@@ -6,17 +6,25 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// {{.Command.Name}}Cmd represents the {{.Command.Name}} command
-var {{.Command.Name}}Cmd = &cobra.Command{
-	Use:   "{{.Command.Name}}",
-	Short: "{{.Command.ShortDescription}}",
-	Long: `{{.Command.LongDescription}}`,
-	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		fmt.Println("{{.Command.Name}} called")
-	},
+{{template "cmd.root.commandArgsTop.tpl" .}}
+
+// {{.Name}}Cmd represents the {{.Name}} command
+var {{.Name}}Cmd = &cobra.Command{
+	Use:   "{{.Name}}",
+	Short: "{{.ShortDescription}}",
+	Long: `{{.LongDescription}}`,
+	Run: Run{{.Name | Title}},
+}
+
+func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
+	// TODO: Work your own magic here
+	fmt.Println("{{.Name}} called")
 }
 
 func init() {
-	RootCmd.AddCommand({{.Command.Name}}Cmd)
+	RootCmd.AddCommand({{.Name}}Cmd)
+
+	{{template "cmd.root.commandArgsBottom.tpl" .}}
+
+	SetFlagsFromEnv({{.Name}}Cmd)
 }

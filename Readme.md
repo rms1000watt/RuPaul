@@ -34,6 +34,8 @@ Testing Purposes
 
 ```sh
 clear && rm -rf out && go run main.go generate -f examples/rygen.yml
+# rm -rf ~/Desktop/go-test && mkdir ~/Desktop/go-test && cp -r out/* ~/Desktop/go-test
+# cd ~/Desktop/go-test && go run main.go version && cd $(go env GOPATH)/src/github.com/rms1000watt/rygen
 ```
 
 **WIP**

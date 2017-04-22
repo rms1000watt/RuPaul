@@ -52,18 +52,16 @@ CommandLine:
   GlobalArgs:
     - Name: verbose
       Description: Verbose logging
-      ShortName: v
       Type: bool
       Default: false
     - Name: url
       Description: URL to hit
-      ShortName: u
       Type: string
       Default: http://www.google.com
   Commands:
     - Name: serve
-      ShortDescription:
-      LongDescription:
+      ShortDescription: Start HTTP Server
+      LongDescription: Start HTTP Server for serving
       API: rest-1
       Args: 
       - Name: host
