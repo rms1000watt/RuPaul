@@ -1,0 +1,2 @@
+{{range $globalArg := .CommandLine.GlobalArgs}}RootCmd.PersistentFlags().{{$globalArg.Type | Title}}Var(&{{$globalArg.Name | ToLower}}, "{{$globalArg.Name | ToLower}}", {{HandleQuotes $globalArg.Default $globalArg.Type}} ,"{{$globalArg.Description}}")
+{{end}}

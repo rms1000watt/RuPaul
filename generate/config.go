@@ -32,11 +32,11 @@ type CommandLine struct {
 }
 
 type Arg struct {
-	Name        string      `yaml:"Name"`
-	Description string      `yaml:"Description"`
-	ShortName   string      `yaml:"ShortName"`
-	Type        string      `yaml:"Type"`
-	Default     interface{} `yaml:"Default"`
+	Name        string `yaml:"Name"`
+	Description string `yaml:"Description"`
+	ShortName   string `yaml:"ShortName"`
+	Type        string `yaml:"Type"`
+	Default     string `yaml:"Default"`
 }
 
 type Command struct {

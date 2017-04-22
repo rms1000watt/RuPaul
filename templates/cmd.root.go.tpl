@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-{{template "cmd.root.globalArgs.tpl"}}
+{{template "cmd.root.globalArgsTop.tpl" .}}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -26,6 +26,31 @@ func Execute() {
 }
 
 func init() {
-	// RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.rygen.yaml)")
-	// RootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	{{template "cmd.root.globalArgsBottom.tpl" .}}
+
+	SetPFlagsFromEnv(RootCmd)
+}
+
+func SetPFlagsFromEnv(cmd *cobra.Command) {
+	// Courtesy of https://github.com/coreos/pkg/blob/master/flagutil/env.go
+	cmd.PersistentFlags().VisitAll(func(f *pflag.Flag) {
+		key := strings.ToUpper(strings.Replace(f.Name, "-", "_", -1))
+		if val := os.Getenv(key); val != "" {
+			if err := cmd.PersistentFlags().Set(f.Name, val); err != nil {
+				fmt.Println("Failed setting flag from env:", err)
+			}
+		}
+	})
+}
+
+func SetFlagsFromEnv(cmd *cobra.Command) {
+	// Courtesy of https://github.com/coreos/pkg/blob/master/flagutil/env.go
+	cmd.Flags().VisitAll(func(f *pflag.Flag) {
+		key := strings.ToUpper(strings.Replace(f.Name, "-", "_", -1))
+		if val := os.Getenv(key); val != "" {
+			if err := cmd.Flags().Set(f.Name, val); err != nil {
+				fmt.Println("Failed setting flag from env:", err)
+			}
+		}
+	})
 }

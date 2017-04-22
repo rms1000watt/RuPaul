@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"text/template"
@@ -17,15 +18,16 @@ const (
 	dirHelpers   = "helpers"
 	dirCmd       = "cmd"
 	extTpl       = ".tpl"
+	typeString   = "string"
 )
 
 var (
 	errGenFail = errors.New("Failed generating project")
 )
 
-type HelperTemplate struct {
-	Name     string
-	Template string
+type Template struct {
+	TemplateName string
+	FileName     string
 }
 
 func Generate(cfg Config) {
@@ -35,28 +37,59 @@ func Generate(cfg Config) {
 		fmt.Printf("Directory: \"%s\" already exists. Continuing...\n", dirOut)
 	}
 
-	templateArrs := [][]string{
-		[]string{".gitignore.tpl"},
-		[]string{"main.go.tpl"},
-		[]string{"cmd.root.go.tpl", filepath.Join(dirHelpers, "cmd.root.globalArgs.tpl")},
-		[]string{"Readme.md.tpl"},
+	helperFileNames, err := getHelperFileNames()
+	if err != nil {
+		fmt.Println("Failed reading helper files:", err)
+		return
 	}
 
-	for _, templateArr := range templateArrs {
-		if err := genFile(cfg, templateArr); err != nil {
-			fmt.Println("Failed generating templateArr:", templateArr, ":", err)
+	templates := getTemplates(cfg)
+	for _, tpl := range templates {
+		if err := genFile(cfg, tpl, helperFileNames); err != nil {
+			fmt.Println("Failed generating template:", tpl.TemplateName, ":", err)
 		}
 	}
 }
 
-// func genFile(cfg Config, templateName string) (err error) {
-func genFile(cfg Config, templateArr []string) (err error) {
-	if len(templateArr) == 0 {
-		fmt.Println("No templates in template arr")
-		return errGenFail
+func getTemplates(cfg Config) (templates []Template) {
+	singleTemplateNames := []string{
+		".gitignore.tpl",
+		"main.go.tpl",
+		"cmd.root.go.tpl",
+		"Readme.md.tpl",
 	}
 
-	templateName := templateArr[0]
+	for _, singleTemplateName := range singleTemplateNames {
+		templates = append(templates, Template{
+			TemplateName: singleTemplateName,
+			FileName:     singleTemplateName,
+		})
+	}
+
+	for _, command := range cfg.CommandLine.Commands {
+		templates = append(templates, Template{
+			TemplateName: "cmd." + strings.ToLower(command.Name) + ".go.tpl",
+			FileName:     "cmd.command.go.tpl",
+		})
+	}
+
+	return
+}
+
+func getHelperFileNames() (helperFileNames []string, err error) {
+	helperFiles, err := ioutil.ReadDir(filepath.Join(dirTemplates, dirHelpers))
+	if err != nil {
+		return
+	}
+
+	for _, helperFile := range helperFiles {
+		helperFileNames = append(helperFileNames, filepath.Join(dirHelpers, helperFile.Name()))
+	}
+	return
+}
+
+func genFile(cfg Config, tpl Template, helperFileNames []string) (err error) {
+	templateName := tpl.TemplateName
 
 	templateNameArr := strings.Split(templateName, ".")
 	if len(templateNameArr) < 3 {
@@ -64,62 +97,49 @@ func genFile(cfg Config, templateArr []string) (err error) {
 		return errGenFail
 	}
 
-	fileName := strings.Join(templateNameArr[len(templateNameArr)-3:len(templateNameArr)-1], ".")
-	dirs := templateNameArr[:len(templateNameArr)-3]
-	dirs = append([]string{dirOut}, dirs...)
-
-	helperTemplates := []HelperTemplate{}
-	if len(templateArr) > 1 {
-		for i := 1; i < len(templateArr); i++ {
-			helperTplPath := filepath.Join(dirTemplates, templateArr[i])
-			helperTplName := filepath.Base(templateArr[i])
-
-			helperBytes, err := ioutil.ReadFile(helperTplPath)
-			if err != nil {
-				fmt.Println("Failed reading helper file:", err)
-				return errGenFail
+	funcMap := template.FuncMap{
+		"ToLower": strings.ToLower,
+		"Title":   strings.Title,
+		"HandleQuotes": func(value, typeStr string) string {
+			if strings.ToLower(typeStr) == typeString {
+				return `"` + value + `"`
 			}
-
-			h, err := template.New(helperTplName).Parse(string(helperBytes))
-			if err != nil {
-				fmt.Println("Failed parsing helper template:", err)
-				return errGenFail
-			}
-
-			var helperBytesBuffer bytes.Buffer
-			if err := h.Execute(&helperBytesBuffer, cfg); err != nil {
-				fmt.Println("Failed executing helper template:", err)
-				return errGenFail
-			}
-
-			helperTemplates = append(helperTemplates, HelperTemplate{
-				Name:     helperTplName,
-				Template: string(helperBytesBuffer.Bytes()),
-			})
-		}
+			return value
+		},
 	}
 
-	templatePath := filepath.Join(dirTemplates, templateName)
-	t, err := template.New(templateName).ParseFiles(templatePath)
+	templateFileName := filepath.Join(dirTemplates, tpl.FileName)
+	fileBytes, err := ioutil.ReadFile(templateFileName)
+	if err != nil {
+		fmt.Println("Failed reading template file:", err)
+		return
+	}
+
+	t, err := template.New(templateName).Funcs(funcMap).Parse(string(fileBytes))
 	if err != nil {
 		fmt.Println("Failed parsing template:", err)
 		return errGenFail
 	}
 
-	for _, helperTemplate := range helperTemplates {
-		if _, err = t.New(helperTemplate.Name).Parse(helperTemplate.Template); err != nil {
-			fmt.Println("Failed parsing helper template 2:", err)
-			return errGenFail
-		}
+	fullHelperFileNames := []string{}
+	for _, helperFileName := range helperFileNames {
+		fullHelperFileNames = append(fullHelperFileNames, filepath.Join(dirTemplates, helperFileName))
 	}
 
-	// TODO: Add helper functions.. ToCamelCase, FormatStringArg (checks type and adds double quotes)
+	if _, err := t.ParseFiles(fullHelperFileNames...); err != nil {
+		fmt.Println("Failed parsing template:", err)
+		return errGenFail
+	}
 
 	var outBuffer bytes.Buffer
 	if err := t.Execute(&outBuffer, cfg); err != nil {
 		fmt.Println("Failed executing template:", err)
 		return errGenFail
 	}
+
+	// Make the required directories for the project
+	dirs := templateNameArr[:len(templateNameArr)-3]
+	dirs = append([]string{dirOut}, dirs...)
 
 	if len(dirs) != 0 {
 		if err := os.MkdirAll(filepath.Join(dirs...), os.ModePerm); err != nil {
@@ -129,6 +149,7 @@ func genFile(cfg Config, templateArr []string) (err error) {
 	}
 
 	dirsStr := filepath.Join(dirs...)
+	fileName := strings.Join(templateNameArr[len(templateNameArr)-3:len(templateNameArr)-1], ".")
 	completeFilePath := filepath.Join(dirsStr, fileName)
 
 	if _, err := os.Stat(completeFilePath); err == nil {
@@ -142,7 +163,8 @@ func genFile(cfg Config, templateArr []string) (err error) {
 		return errGenFail
 	}
 
-	// TODO: Run gofmt
+	exec.Command("goimports", "-w", completeFilePath).CombinedOutput()
+	exec.Command("gofmt", "-w", completeFilePath).CombinedOutput()
 
 	return nil
 }

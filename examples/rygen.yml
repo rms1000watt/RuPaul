@@ -51,12 +51,12 @@ CommandLine:
   AppLongDescription: This is a Rygen Test app. This is just to test the functionality.
   GlobalArgs:
     - Name: verbose
-      Description:
+      Description: Verbose logging
       ShortName: v
       Type: bool
       Default: false
     - Name: url
-      Description:
+      Description: URL to hit
       ShortName: u
       Type: string
       Default: http://www.google.com
