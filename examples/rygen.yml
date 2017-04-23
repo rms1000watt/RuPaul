@@ -1,4 +1,5 @@
 Version: v0.1.0
+CopyrightHolder: Ryan Smith
 MainImportPath: github.com/rms1000watt/rygen-test
 
 Data:
@@ -23,7 +24,8 @@ Connectors:
     Password: postgres
 
 API:
-  - Name: rest-1
+  Rest1:
+    Name: rest-1
     Type: REST
     Serialization: JSON
     Middlewares: 

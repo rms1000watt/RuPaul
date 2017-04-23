@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"strings"
 	"text/template"
+	"time"
 )
 
 const (
@@ -54,12 +55,25 @@ func Generate(cfg Config) {
 	}
 }
 
+func getHelperFileNames() (helperFileNames []string, err error) {
+	helperFiles, err := ioutil.ReadDir(filepath.Join(dirTemplates, dirHelpers))
+	if err != nil {
+		return
+	}
+
+	for _, helperFile := range helperFiles {
+		helperFileNames = append(helperFileNames, filepath.Join(dirHelpers, helperFile.Name()))
+	}
+	return
+}
+
 func getTemplates(cfg Config) (templates []Template) {
 	singleTemplateNames := []string{
 		".gitignore.tpl",
 		"main.go.tpl",
 		"cmd.root.go.tpl",
 		"Readme.md.tpl",
+		"License.md.tpl",
 	}
 
 	for _, singleTemplateName := range singleTemplateNames {
@@ -94,8 +108,9 @@ func getTemplates(cfg Config) (templates []Template) {
 
 func mapCfgToSingle(cfg Config, commandName string) (sCfg SingleConfig) {
 	sCfg = SingleConfig{
-		Version:        cfg.Version,
-		MainImportPath: cfg.MainImportPath,
+		Version:         cfg.Version,
+		MainImportPath:  cfg.MainImportPath,
+		CopyrightHolder: cfg.CopyrightHolder,
 		CommandLine: SingleCommandLine{
 			AppName:             cfg.CommandLine.AppName,
 			AppLongDescription:  cfg.CommandLine.AppLongDescription,
@@ -103,19 +118,6 @@ func mapCfgToSingle(cfg Config, commandName string) (sCfg SingleConfig) {
 			GlobalArgs:          cfg.CommandLine.GlobalArgs,
 			Command:             cfg.CommandLine.Commands[commandName],
 		},
-	}
-
-	return
-}
-
-func getHelperFileNames() (helperFileNames []string, err error) {
-	helperFiles, err := ioutil.ReadDir(filepath.Join(dirTemplates, dirHelpers))
-	if err != nil {
-		return
-	}
-
-	for _, helperFile := range helperFiles {
-		helperFileNames = append(helperFileNames, filepath.Join(dirHelpers, helperFile.Name()))
 	}
 	return
 }
@@ -130,8 +132,9 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	}
 
 	funcMap := template.FuncMap{
-		"ToLower": strings.ToLower,
-		"Title":   strings.Title,
+		"ToLower":     strings.ToLower,
+		"Title":       strings.Title,
+		"TimeNowYear": time.Now().Year,
 		"HandleQuotes": func(value, typeStr string) string {
 			if strings.ToLower(typeStr) == typeString {
 				return `"` + value + `"`
