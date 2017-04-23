@@ -3,8 +3,10 @@ package cmd
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
+	"github.com/spf13/pflag"
 )
 
 {{template "cmd.root.globalArgsTop.tpl" .}}

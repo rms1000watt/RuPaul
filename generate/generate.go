@@ -70,11 +70,22 @@ func getTemplates(cfg Config) (templates []Template) {
 		})
 	}
 
-	for _, command := range cfg.CommandLine.Commands {
+	for key, value := range cfg.CommandLine.Commands {
+		lowerKey := strings.ToLower(key)
 		templates = append(templates, Template{
-			TemplateName: "cmd." + strings.ToLower(command.Name) + ".go.tpl",
+			TemplateName: "cmd." + lowerKey + ".go.tpl",
 			FileName:     "cmd.command.go.tpl",
-			Data:         command,
+			Data:         value,
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + "." + lowerKey + ".go.tpl",
+			FileName:     "command.command.go.tpl",
+			Data:         value,
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + ".config.go.tpl",
+			FileName:     "command.config.go.tpl",
+			Data:         value,
 		})
 	}
 

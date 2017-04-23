@@ -2,7 +2,7 @@ Version: v0.1.0
 MainImportPath: github.com/rms1000watt/rygen-test
 
 Data:
-  - Name: first_name
+  FirstName:
     Type: string
     Default: 
     Required: false
@@ -13,10 +13,10 @@ Data:
     MustHaveChars:
     CantHaveChars:
     OnlyHaveChars:
-  - Name: middle_name
-  - Name: last_name
+  MiddleName:
+  LastName:
 
-DAL:
+Connectors:
   - Name: postgres-1
     Type: Postgres
     URL: http://localhost:8181/
@@ -36,7 +36,7 @@ API:
         - first_name
         - middle_name
         - last_name
-        DAL: postgres-1
+        Connector: postgres-1
         Methods:
         - Options
         - Get
@@ -50,26 +50,28 @@ CommandLine:
   AppShortDescription: First Rygen Test app
   AppLongDescription: This is a Rygen Test app. This is just to test the functionality.
   GlobalArgs:
-    - Name: verbose
+    Verbose:
       Description: Verbose logging
       Type: bool
       Default: false
-    - Name: url
+    URL:
       Description: URL to hit
       Type: string
       Default: http://www.google.com
   Commands:
-    - Name: serve
+    Serve:
+      Name: serve
       ShortDescription: Start HTTP Server
       LongDescription: Start HTTP Server for serving
       API: rest-1
       Args: 
-      - Name: host
-        Type: string
-        Default: 0.0.0.0
-        Description: Host address for server
-      - Name: port
-        Type: int
-        Default: 8080
-        Description: Port for server
-    - Name: version
+        Host:
+          Type: string
+          Default: 0.0.0.0
+          Description: Host address for server
+        Port:
+          Type: int
+          Default: 8080
+          Description: Port for server
+    Version:
+      Name: version

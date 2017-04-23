@@ -1,4 +1,4 @@
 var (
-    {{range $globalArg := .CommandLine.GlobalArgs}}{{$globalArg.Name | ToLower}} {{$globalArg.Type | ToLower}}
+    {{range $k, $v := .CommandLine.GlobalArgs}}{{$k | ToLower}} {{$v.Type | ToLower}}
     {{end}}
 )

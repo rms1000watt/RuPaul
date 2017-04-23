@@ -1,10 +1,10 @@
 package generate
 
 type Config struct {
-	Version        string `yaml:"Version"`
-	MainImportPath string `yaml:"MainImportPath"`
-	Datas          []Data `yaml:"Data"`
-	// DALs        []DAL       `yaml:"DAL"`
+	Version        string          `yaml:"Version"`
+	MainImportPath string          `yaml:"MainImportPath"`
+	Datas          map[string]Data `yaml:"Data"`
+	// Connectors     []Connector `yaml:"Connector"`
 	// APIs        []API       `yaml:"API"`
 	CommandLine CommandLine `yaml:"CommandLine"`
 }
@@ -24,11 +24,11 @@ type Data struct {
 }
 
 type CommandLine struct {
-	AppName             string    `yaml:"AppName"`
-	AppShortDescription string    `yaml:"AppShortDescription"`
-	AppLongDescription  string    `yaml:"AppLongDescription"`
-	GlobalArgs          []Arg     `yaml:"GlobalArgs"`
-	Commands            []Command `yaml:"Commands"`
+	AppName             string             `yaml:"AppName"`
+	AppShortDescription string             `yaml:"AppShortDescription"`
+	AppLongDescription  string             `yaml:"AppLongDescription"`
+	GlobalArgs          map[string]Arg     `yaml:"GlobalArgs"`
+	Commands            map[string]Command `yaml:"Commands"`
 }
 
 type Arg struct {
@@ -40,8 +40,8 @@ type Arg struct {
 }
 
 type Command struct {
-	Name             string `yaml:"Name"`
-	ShortDescription string `yaml:"ShortDescription"`
-	LongDescription  string `yaml:"LongDescription"`
-	Args             []Arg  `yaml:"Args"`
+	Name             string         `yaml:"Name"`
+	ShortDescription string         `yaml:"ShortDescription"`
+	LongDescription  string         `yaml:"LongDescription"`
+	Args             map[string]Arg `yaml:"Args"`
 }

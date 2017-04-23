@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/spf13/cobra"
+	
 )
 
 {{template "cmd.root.commandArgsTop.tpl" .}}
@@ -17,8 +18,14 @@ var {{.Name}}Cmd = &cobra.Command{
 }
 
 func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
-	// TODO: Work your own magic here
-	fmt.Println("{{.Name}} called")
+	// Get config arguments and pass it to the function itself
+	{{.Name}}Cfg := {{.Name}}.Config{
+		{{template "cmd.root.commandArgsMiddle.tpl" .}}
+	}
+
+	{{.Name}}.{{.Name | Title}}({{.Name}}Cfg)
+
+	fmt.Println("Remove me later...{{.Name}}")
 }
 
 func init() {

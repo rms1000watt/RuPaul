@@ -1,4 +1,4 @@
 var (
-    {{range $arg := .Args}}{{$arg.Name | ToLower}} {{$arg.Type | ToLower}}
+    {{range $k, $v := .Args}}{{$k | ToLower}} {{$v.Type | ToLower}}
     {{end}}
 )
