@@ -34,7 +34,7 @@ Testing Purposes
 
 ```sh
 clear && rm -rf out && go run main.go generate -f examples/rygen.yml
-PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rygen-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH && cp -r out/* $PROJECT_PATH && cd $PROJECT_PATH && go run main.go serve -h && cd ../rygen'
+PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rygen-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH && cp -r out/* $PROJECT_PATH && go run $PROJECT_PATH/main.go serve'
 ```
 
 **WIP**

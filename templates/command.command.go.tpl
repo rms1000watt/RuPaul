@@ -1,5 +1,11 @@
-package generate
+package {{.CommandLine.Command.Name}}
 
-func Generate(cfg Config) {
+import (
+    "fmt"
+)
 
+func {{.CommandLine.Command.Name | Title}}(cfg Config) {
+    fmt.Println("Config:", cfg)
+
+    fmt.Println("{{.CommandLine.Command.Name}} called..")
 }

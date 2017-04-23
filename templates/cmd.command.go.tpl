@@ -24,8 +24,6 @@ func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
 	}
 
 	{{.Name}}.{{.Name | Title}}({{.Name}}Cfg)
-
-	fmt.Println("Remove me later...{{.Name}}")
 }
 
 func init() {

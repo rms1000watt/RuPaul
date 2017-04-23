@@ -80,13 +80,29 @@ func getTemplates(cfg Config) (templates []Template) {
 		templates = append(templates, Template{
 			TemplateName: lowerKey + "." + lowerKey + ".go.tpl",
 			FileName:     "command.command.go.tpl",
-			Data:         value,
+			Data:         mapCfgToSingle(cfg, key),
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".config.go.tpl",
 			FileName:     "command.config.go.tpl",
-			Data:         value,
+			Data:         mapCfgToSingle(cfg, key),
 		})
+	}
+
+	return
+}
+
+func mapCfgToSingle(cfg Config, commandName string) (sCfg SingleConfig) {
+	sCfg = SingleConfig{
+		Version:        cfg.Version,
+		MainImportPath: cfg.MainImportPath,
+		CommandLine: SingleCommandLine{
+			AppName:             cfg.CommandLine.AppName,
+			AppLongDescription:  cfg.CommandLine.AppLongDescription,
+			AppShortDescription: cfg.CommandLine.AppShortDescription,
+			GlobalArgs:          cfg.CommandLine.GlobalArgs,
+			Command:             cfg.CommandLine.Commands[commandName],
+		},
 	}
 
 	return

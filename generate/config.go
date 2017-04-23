@@ -1,11 +1,11 @@
 package generate
 
 type Config struct {
-	Version        string          `yaml:"Version"`
-	MainImportPath string          `yaml:"MainImportPath"`
-	Datas          map[string]Data `yaml:"Data"`
-	// Connectors     []Connector `yaml:"Connector"`
-	// APIs        []API       `yaml:"API"`
+	Version        string `yaml:"Version"`
+	MainImportPath string `yaml:"MainImportPath"`
+	// Datas          map[string]Data `yaml:"Data"`
+	// Connectors     map[string]Connector `yaml:"Connector"`
+	// APIs        map[string]API       `yaml:"API"`
 	CommandLine CommandLine `yaml:"CommandLine"`
 }
 
@@ -44,4 +44,18 @@ type Command struct {
 	ShortDescription string         `yaml:"ShortDescription"`
 	LongDescription  string         `yaml:"LongDescription"`
 	Args             map[string]Arg `yaml:"Args"`
+}
+
+type SingleConfig struct {
+	Version        string
+	MainImportPath string
+	CommandLine    SingleCommandLine
+}
+
+type SingleCommandLine struct {
+	AppName             string
+	AppShortDescription string
+	AppLongDescription  string
+	GlobalArgs          map[string]Arg
+	Command             Command
 }
