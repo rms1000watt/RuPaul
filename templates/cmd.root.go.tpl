@@ -9,7 +9,7 @@ import (
 	"github.com/spf13/pflag"
 )
 
-{{template "cmd.root.globalArgsTop.tpl" .}}
+{{template "global-args-top.tpl" .}}
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
@@ -28,7 +28,7 @@ func Execute() {
 }
 
 func init() {
-	{{template "cmd.root.globalArgsBottom.tpl" .}}
+	{{template "global-args-bottom.tpl" .}}
 
 	SetPFlagsFromEnv(RootCmd)
 }

@@ -1,13 +1,14 @@
 package generate
 
+// Yaml Config
 type Config struct {
-	Version         string `yaml:"Version"`
-	MainImportPath  string `yaml:"MainImportPath"`
-	CopyrightHolder string `yaml:"CopyrightHolder"`
-	// Datas          map[string]Data `yaml:"Data"`
-	// Connectors     map[string]Connector `yaml:"Connector"`
-	APIs        map[string]API `yaml:"API"`
-	CommandLine CommandLine    `yaml:"CommandLine"`
+	Version         string          `yaml:"Version"`
+	MainImportPath  string          `yaml:"MainImportPath"`
+	CopyrightHolder string          `yaml:"CopyrightHolder"`
+	Datas           map[string]Data `yaml:"Data"`
+	APIs            map[string]API  `yaml:"APIs"`
+	CommandLine     CommandLine     `yaml:"CommandLine"`
+	// Connectors      map[string]Connector `yaml:"Connector"`
 }
 
 type Data struct {
@@ -22,10 +23,25 @@ type Data struct {
 	MustHaveChars string `yaml:"MustHaveChars"`
 	CantHaveChars string `yaml:"CantHaveChars"`
 	OnlyHaveChars string `yaml:"OnlyHaveChars"`
+	GreaterThan   int    `yaml:"GreaterThan"`
+	LessThan      int    `yaml:"LessThan"`
 }
 
 type API struct {
-	Name string `yaml:"Name"`
+	Name          string   `yaml:"Name"`
+	Type          string   `yaml:"Type"`
+	Serialization string   `yaml:"Serialization"`
+	Middlewares   []string `yaml:"Midlewares"`
+	Paths         []Path   `yaml:"Paths"`
+}
+
+type Path struct {
+	Name      string   `yaml:"Name"`
+	Pattern   string   `yaml:"Pattern"`
+	Inputs    []string `yaml:"Inputs"`
+	Connector string   `yaml:"Connector"`
+	Methods   []string `yaml:"Methods"`
+	Outputs   []string `yaml:"Outputs"`
 }
 
 type CommandLine struct {
@@ -52,18 +68,36 @@ type Command struct {
 	API              string         `yaml:"API"`
 }
 
-type SingleConfig struct {
+// Template/Generator Config
+type TemplateConfig struct {
 	Version         string
 	MainImportPath  string
 	CopyrightHolder string
-	APIs            map[string]API
-	CommandLine     SingleCommandLine
+	API             TemplateAPI
+	CommandLine     TemplateCommandLine
 }
 
-type SingleCommandLine struct {
+type TemplateCommandLine struct {
 	AppName             string
 	AppShortDescription string
 	AppLongDescription  string
 	GlobalArgs          map[string]Arg
 	Command             Command
+}
+
+type TemplateAPI struct {
+	Name          string
+	Type          string
+	Serialization string
+	Middlewares   []string
+	Paths         []TemplatePath
+}
+
+type TemplatePath struct {
+	Name      string
+	Pattern   string
+	Inputs    []Data
+	Connector string
+	Methods   []string
+	Outputs   []Data
 }

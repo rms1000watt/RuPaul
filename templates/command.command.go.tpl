@@ -5,11 +5,10 @@ import (
 )
 
 func {{.CommandLine.Command.Name | Title}}(cfg Config) {
-    fmt.Println("Config:", cfg)
+    fmt.Println("{{.CommandLine.Command.Name | Title}} Config:", cfg)
 
-    {{template "command.command.apiMiddle.tpl" .}}
-
-    fmt.Println("{{.CommandLine.Command.Name}} called..")
+    {{template "api-middle.tpl" .}}
+    {{template "version-middle.tpl" .}}
 }
 
-{{template "command.command.apiBottom.tpl" .}}
+{{template "api-bottom.tpl" .}}

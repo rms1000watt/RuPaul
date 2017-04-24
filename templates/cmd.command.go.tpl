@@ -7,7 +7,7 @@ import (
 	
 )
 
-{{template "cmd.root.commandArgsTop.tpl" .}}
+{{template "command-args-top.tpl" .}}
 
 // {{.Name}}Cmd represents the {{.Name}} command
 var {{.Name}}Cmd = &cobra.Command{
@@ -20,7 +20,7 @@ var {{.Name}}Cmd = &cobra.Command{
 func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
 	// Get config arguments and pass it to the function itself
 	{{.Name}}Cfg := {{.Name}}.Config{
-		{{template "cmd.root.commandArgsMiddle.tpl" .}}
+		{{template "command-args-middle.tpl" .}}
 	}
 
 	{{.Name}}.{{.Name | Title}}({{.Name}}Cfg)
@@ -29,7 +29,7 @@ func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
 func init() {
 	RootCmd.AddCommand({{.Name}}Cmd)
 
-	{{template "cmd.root.commandArgsBottom.tpl" .}}
+	{{template "command-args-bottom.tpl" .}}
 
 	SetFlagsFromEnv({{.Name}}Cmd)
 }

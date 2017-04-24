@@ -14,6 +14,8 @@ Data:
     MustHaveChars:
     CantHaveChars:
     OnlyHaveChars:
+    GreaterThan:
+    LessThan:
   MiddleName:
   LastName:
 
@@ -23,7 +25,7 @@ Connectors:
     URL: http://localhost:8181/
     Password: postgres
 
-API:
+APIs:
   Rest1:
     Name: rest-1
     Type: REST
@@ -33,7 +35,8 @@ API:
       - Authentication
       - CSRF
     Paths:
-      - Name: /person
+      - Name: person
+        Pattern: /person
         Inputs:
         - first_name
         - middle_name
@@ -66,6 +69,7 @@ CommandLine:
       ShortDescription: Start HTTP Server
       LongDescription: Start HTTP Server for serving
       API: rest-1
+      # Server requires Host & Port defined
       Args: 
         Host:
           Type: string

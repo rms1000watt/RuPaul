@@ -94,31 +94,25 @@ func getTemplates(cfg Config) (templates []Template) {
 		templates = append(templates, Template{
 			TemplateName: lowerKey + "." + lowerKey + ".go.tpl",
 			FileName:     "command.command.go.tpl",
-			Data:         mapCfgToSingle(cfg, key),
+			Data:         yamlToTemplateCfg(cfg, key),
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".config.go.tpl",
 			FileName:     "command.config.go.tpl",
-			Data:         mapCfgToSingle(cfg, key),
+			Data:         yamlToTemplateCfg(cfg, key),
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + ".helpers.go.tpl",
+			FileName:     "command.helpers.go.tpl",
+			Data:         yamlToTemplateCfg(cfg, key),
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + ".data.go.tpl",
+			FileName:     "command.data.go.tpl",
+			Data:         yamlToTemplateCfg(cfg, key),
 		})
 	}
 
-	return
-}
-
-func mapCfgToSingle(cfg Config, commandName string) (sCfg SingleConfig) {
-	sCfg = SingleConfig{
-		Version:         cfg.Version,
-		MainImportPath:  cfg.MainImportPath,
-		CopyrightHolder: cfg.CopyrightHolder,
-		CommandLine: SingleCommandLine{
-			AppName:             cfg.CommandLine.AppName,
-			AppLongDescription:  cfg.CommandLine.AppLongDescription,
-			AppShortDescription: cfg.CommandLine.AppShortDescription,
-			GlobalArgs:          cfg.CommandLine.GlobalArgs,
-			Command:             cfg.CommandLine.Commands[commandName],
-		},
-	}
 	return
 }
 
@@ -140,6 +134,9 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 				return `"` + value + `"`
 			}
 			return value
+		},
+		"ToSnakeCase": func(value string) string {
+			return strings.ToLower(strings.Join(SplitCamel(value), "_"))
 		},
 	}
 
