@@ -11,9 +11,9 @@ var cfgFile string
 
 // RootCmd represents the base command when called without any subcommands
 var RootCmd = &cobra.Command{
-	Use:   "rygen",
-	Short: "RyGen: A Golang code generator",
-	Long:  `RyGen: A Golang code generator`,
+	Use:   "rupaul",
+	Short: "RuPaul: A Golang code generator",
+	Long:  `RuPaul: A Golang code generator`,
 }
 
 // Execute adds all child commands to the root command sets flags appropriately.

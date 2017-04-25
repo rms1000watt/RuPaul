@@ -5,7 +5,7 @@ import (
 
 	"io/ioutil"
 
-	"github.com/rms1000watt/rygen/generate"
+	"github.com/rms1000watt/rupaul/generate"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v2"
 )
@@ -14,8 +14,8 @@ var (
 	configFilePath = ""
 	generateCmd    = &cobra.Command{
 		Use:   "generate",
-		Short: "Generates code from a `rygen.yml` file",
-		Long:  `Generates code from a "rygen.yml" file`,
+		Short: "Generates code from a `rupaul.yml` file",
+		Long:  `Generates code from a "rupaul.yml" file`,
 		Run:   runGenerate,
 	}
 )
@@ -40,5 +40,5 @@ func runGenerate(cmd *cobra.Command, args []string) {
 func init() {
 	RootCmd.AddCommand(generateCmd)
 
-	generateCmd.Flags().StringVarP(&configFilePath, "config-file", "f", "./rygen.yml", "Config File Path of the RyGen YAML")
+	generateCmd.Flags().StringVarP(&configFilePath, "config-file", "f", "./rupaul.yml", "Config File Path of the RuPaul YAML")
 }

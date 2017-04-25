@@ -1,6 +1,6 @@
 Version: v0.1.0
 CopyrightHolder: Ryan Smith
-MainImportPath: github.com/rms1000watt/rygen-test
+MainImportPath: github.com/rms1000watt/rupaul-test
 
 Data:
   FirstName:
@@ -51,9 +51,9 @@ APIs:
         - middle_name
 
 CommandLine:
-  AppName: "RygenTest"
-  AppShortDescription: First Rygen Test app
-  AppLongDescription: This is a Rygen Test app. This is just to test the functionality.
+  AppName: "RuPaulTest"
+  AppShortDescription: First RuPaul Test app
+  AppLongDescription: This is a RuPaul Test app. This is just to test the functionality.
   GlobalArgs:
     Verbose:
       Description: Verbose logging
