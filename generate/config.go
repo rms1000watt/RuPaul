@@ -12,12 +12,10 @@ type Config struct {
 }
 
 type Data struct {
-	Name          string `yaml:"Name"`
-	Type          string `yaml:"Type"`
-	Default       string `yaml:"Default"`
+	Name string `yaml:"Name"`
+	Type string `yaml:"Type"`
+	// Validations
 	Required      bool   `yaml:"Required"`
-	Encrypted     bool   `yaml:"Encrypted"`
-	Hashed        string `yaml:"Hashed"`
 	MaxLength     int    `yaml:"MaxLength"`
 	MinLength     int    `yaml:"MinLength"`
 	MustHaveChars string `yaml:"MustHaveChars"`
@@ -25,6 +23,12 @@ type Data struct {
 	OnlyHaveChars string `yaml:"OnlyHaveChars"`
 	GreaterThan   int    `yaml:"GreaterThan"`
 	LessThan      int    `yaml:"LessThan"`
+	// Transforms
+	TrimChars string `yaml:"TrimChars"`
+	Truncate  int    `yaml:"Truncate"`
+	Encrypt   bool   `yaml:"Encrypt"`
+	Hash      bool   `yaml:"Hash"`
+	Default   string `yaml:"Default"`
 }
 
 type API struct {

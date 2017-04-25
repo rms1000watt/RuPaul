@@ -5,8 +5,8 @@ MainImportPath: github.com/rms1000watt/rupaul-test
 Data:
   FirstName:
     Type: string
-    Default: 
-    Required: false
+    Default:
+    Required: true
     Encrypted: false
     Hashed: false
     MaxLength: 50
@@ -16,8 +16,16 @@ Data:
     OnlyHaveChars:
     GreaterThan:
     LessThan:
+    TrimChars:
+    Truncate: 50
   MiddleName:
+    Type: string
   LastName:
+    Type: string
+    Required: true
+    Hashed: true
+    MaxLength: 50
+
 
 Connectors:
   - Name: postgres-1

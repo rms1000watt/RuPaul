@@ -20,6 +20,9 @@ const (
 	dirCmd       = "cmd"
 	extTpl       = ".tpl"
 	typeString   = "string"
+	typeBool     = "bool"
+	typeFloat    = "float"
+	typeInt      = "int"
 )
 
 var (
@@ -73,7 +76,8 @@ func getTemplates(cfg Config) (templates []Template) {
 		"main.go.tpl",
 		"cmd.root.go.tpl",
 		"Readme.md.tpl",
-		"License.md.tpl",
+		"License..tpl",
+		"Dockerfile..tpl",
 	}
 
 	for _, singleTemplateName := range singleTemplateNames {
@@ -126,18 +130,13 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	}
 
 	funcMap := template.FuncMap{
-		"ToLower":     strings.ToLower,
-		"Title":       strings.Title,
-		"TimeNowYear": time.Now().Year,
-		"HandleQuotes": func(value, typeStr string) string {
-			if strings.ToLower(typeStr) == typeString {
-				return `"` + value + `"`
-			}
-			return value
-		},
-		"ToSnakeCase": func(value string) string {
-			return strings.ToLower(strings.Join(SplitCamel(value), "_"))
-		},
+		"ToLower":          strings.ToLower,
+		"Title":            strings.Title,
+		"TimeNowYear":      time.Now().Year,
+		"GenValidationStr": GenValidationStr,
+		"GenTransformStr":  GenTransformStr,
+		"HandleQuotes":     HandleQuotes,
+		"ToSnakeCase":      ToSnakeCase,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)
@@ -184,6 +183,10 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	fileName := strings.Join(templateNameArr[len(templateNameArr)-3:len(templateNameArr)-1], ".")
 	completeFilePath := filepath.Join(dirsStr, fileName)
 
+	if filepath.Ext(completeFilePath) == "." {
+		completeFilePath = completeFilePath[:len(completeFilePath)-1]
+	}
+
 	if _, err := os.Stat(completeFilePath); err == nil {
 		fmt.Println("NO overwrite, file exists:", completeFilePath)
 		return nil
@@ -195,8 +198,10 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		return errGenFail
 	}
 
-	exec.Command("goimports", "-w", completeFilePath).CombinedOutput()
-	exec.Command("gofmt", "-w", completeFilePath).CombinedOutput()
+	if filepath.Ext(completeFilePath) == ".go" {
+		exec.Command("goimports", "-w", completeFilePath).CombinedOutput()
+		exec.Command("gofmt", "-w", completeFilePath).CombinedOutput()
+	}
 
 	return nil
 }

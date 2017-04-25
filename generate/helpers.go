@@ -4,6 +4,8 @@ import (
 	"strings"
 	"unicode"
 	"unicode/utf8"
+
+	"github.com/spf13/cast"
 )
 
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
@@ -96,13 +98,82 @@ func massageData(name string, in Data) (out Data) {
 	return
 }
 
+func GenTransformStr(in Data) (out string) {
+	// TODO: Put all of these into constants and import in helpers.tpl
+	if in.Encrypt {
+		out += "encrypt,"
+	}
+
+	if in.Hash {
+		out += "hash,"
+	}
+
+	if in.Truncate > 0 {
+		out += "truncate=" + cast.ToString(in.Truncate) + ","
+	}
+
+	if in.TrimChars != "" {
+		out += "trimChars,"
+	}
+
+	return strings.Trim(out, ",")
+}
+
+func GenValidationStr(in Data) (out string) {
+	// TODO: Put all of these into constants and import in helpers.tpl
+	if in.Required {
+		out += "required,"
+	}
+
+	if in.MaxLength > 0 {
+		out += "maxLength=" + cast.ToString(in.MaxLength) + ","
+	}
+
+	if in.MinLength > 0 {
+		out += "minLength=" + cast.ToString(in.MinLength) + ","
+	}
+
+	if in.MustHaveChars != "" {
+		out += "mustHaveChars=" + in.MustHaveChars + ","
+	}
+
+	if in.CantHaveChars != "" {
+		out += "cantHaveChars=" + in.CantHaveChars + ","
+	}
+
+	if in.OnlyHaveChars != "" {
+		out += "onlyHaveChars=" + in.OnlyHaveChars + ","
+	}
+
+	if in.Type == typeFloat || in.Type == typeInt {
+		out += "greaterThan=" + cast.ToString(in.GreaterThan) + ","
+	}
+
+	if in.Type == typeFloat || in.Type == typeInt {
+		out += "lessThan=" + cast.ToString(in.LessThan) + ","
+	}
+
+	return strings.Trim(out, ",")
+}
+
+func HandleQuotes(value, typeStr string) string {
+	if strings.ToLower(typeStr) == typeString {
+		return `"` + value + `"`
+	}
+	return value
+}
+
+func NormalizeConfig() {
+
+}
+
 // Courtesy of https://github.com/fatih/camelcase/blob/master/camelcase.go
-func SplitCamel(src string) (entries []string) {
+func ToSnakeCase(src string) (out string) {
 	// don't split invalid utf8
 	if !utf8.ValidString(src) {
-		return []string{src}
+		return src
 	}
-	entries = []string{}
+	entries := []string{}
 	var runes [][]rune
 	lastClass := 0
 	class := 0
@@ -139,5 +210,6 @@ func SplitCamel(src string) (entries []string) {
 			entries = append(entries, string(s))
 		}
 	}
-	return
+
+	return strings.ToLower(strings.Join(entries, "_"))
 }
