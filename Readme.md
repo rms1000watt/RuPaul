@@ -1,6 +1,6 @@
-## RuPaul Golang Code Generator
+## RuPaul: The Golang Code Generator
 
-RuPaul Golang Code Generator is the fiercest Golang starter kit you've encountered!
+RuPaul: The Golang Code Generator is the fiercest Golang starter kit you've encountered!
 
 **WIP**
 
