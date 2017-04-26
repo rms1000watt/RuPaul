@@ -24,11 +24,12 @@ type Data struct {
 	GreaterThan   *int   `yaml:"GreaterThan"`
 	LessThan      *int   `yaml:"LessThan"`
 	// Transforms
-	TrimChars string `yaml:"TrimChars"`
-	Truncate  int    `yaml:"Truncate"`
-	Encrypt   bool   `yaml:"Encrypt"`
-	Hash      bool   `yaml:"Hash"`
-	Default   string `yaml:"Default"`
+	TrimChars    string `yaml:"TrimChars"`
+	Truncate     int    `yaml:"Truncate"`
+	Encrypt      bool   `yaml:"Encrypt"`
+	PasswordHash bool   `yaml:"PasswordHash"`
+	Hash         bool   `yaml:"Hash"`
+	Default      string `yaml:"Default"`
 }
 
 type API struct {

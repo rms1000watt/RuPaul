@@ -40,7 +40,7 @@ cd ../rupaul-test && go run main.go serve
 
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33}' localhost:8080/person
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"score":123.123}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123}' localhost:8080/person
 ```
 
 **WIP**

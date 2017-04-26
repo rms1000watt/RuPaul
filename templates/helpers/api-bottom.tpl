@@ -33,7 +33,19 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}	
 
-	// TODO: Transform function
+	transformedInput, err := Transform({{$path.Name}}Input)
+	if err != nil {
+		fmt.Println("Failed transforming input:", err)
+		http.Error(w, ErrorJSON("Transform Error"), http.StatusInternalServerError)
+		return
+	}
+
+	{{$path.Name}}Input, ok = transformedInput.({{$path.Name | Title}}Input)
+	if !ok {
+		fmt.Printf("Failed interface type assertion")
+		http.Error(w, ErrorJSON("Interface Error"), http.StatusInternalServerError)
+		return
+	}
 
 	// Developer make updates here...
 

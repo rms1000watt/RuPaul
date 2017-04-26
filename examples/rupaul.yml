@@ -32,6 +32,10 @@ Data:
   Account:
     Type: float64
     Required: true
+  Password:
+    Type: string
+    Required: true
+    PasswordHash: true
 
 
 Connectors:
@@ -58,6 +62,7 @@ APIs:
         - last_name
         - age
         - account
+        - password
         Connector: postgres-1
         Methods:
         - Options

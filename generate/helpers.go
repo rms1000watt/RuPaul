@@ -13,6 +13,7 @@ const (
 	TransformStrHash         = "hash"
 	TransformStrTruncate     = "truncate"
 	TransformStrTrimChars    = "trimChars"
+	TransformStrDefault      = "default"
 	ValidateStrMaxLength     = "maxLength"
 	ValidateStrMinLength     = "minLength"
 	ValidateStrGreaterThan   = "greaterThan"
@@ -129,6 +130,10 @@ func GenTransformStr(in Data) (out string) {
 
 	if in.TrimChars != "" {
 		out += TransformStrTrimChars + "=" + in.TrimChars + ","
+	}
+
+	if in.Default != "" {
+		out += TransformStrDefault + "=" + in.Default + ","
 	}
 
 	return strings.Trim(out, ",")
