@@ -21,8 +21,8 @@ type Data struct {
 	MustHaveChars string `yaml:"MustHaveChars"`
 	CantHaveChars string `yaml:"CantHaveChars"`
 	OnlyHaveChars string `yaml:"OnlyHaveChars"`
-	GreaterThan   int    `yaml:"GreaterThan"`
-	LessThan      int    `yaml:"LessThan"`
+	GreaterThan   *int   `yaml:"GreaterThan"`
+	LessThan      *int   `yaml:"LessThan"`
 	// Transforms
 	TrimChars string `yaml:"TrimChars"`
 	Truncate  int    `yaml:"Truncate"`

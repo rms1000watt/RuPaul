@@ -8,6 +8,21 @@ import (
 	"github.com/spf13/cast"
 )
 
+const (
+	TransformStrEncrypt      = "encrypt"
+	TransformStrHash         = "hash"
+	TransformStrTruncate     = "truncate"
+	TransformStrTrimChars    = "trimChars"
+	ValidateStrMaxLength     = "maxLength"
+	ValidateStrMinLength     = "minLength"
+	ValidateStrGreaterThan   = "greaterThan"
+	ValidateStrLessThan      = "lessThan"
+	ValidateStrRequired      = "required"
+	ValidateStrMustHaveChars = "mustHaveChars"
+	ValidateStrCantHaveChars = "cantHaveChars"
+	ValidateStrOnlyHaveChars = "onlyHaveChars"
+)
+
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 	apiName := toUpperCamelCase(cfg.CommandLine.Commands[commandName].API)
 	templateAPI := yamlToTemplateAPI(cfg.APIs[apiName], cfg)
@@ -101,19 +116,19 @@ func massageData(name string, in Data) (out Data) {
 func GenTransformStr(in Data) (out string) {
 	// TODO: Put all of these into constants and import in helpers.tpl
 	if in.Encrypt {
-		out += "encrypt,"
+		out += TransformStrEncrypt + ","
 	}
 
 	if in.Hash {
-		out += "hash,"
+		out += TransformStrHash + ","
 	}
 
 	if in.Truncate > 0 {
-		out += "truncate=" + cast.ToString(in.Truncate) + ","
+		out += TransformStrTruncate + "=" + cast.ToString(in.Truncate) + ","
 	}
 
 	if in.TrimChars != "" {
-		out += "trimChars,"
+		out += TransformStrTrimChars + "=" + in.TrimChars + ","
 	}
 
 	return strings.Trim(out, ",")
@@ -122,35 +137,35 @@ func GenTransformStr(in Data) (out string) {
 func GenValidationStr(in Data) (out string) {
 	// TODO: Put all of these into constants and import in helpers.tpl
 	if in.Required {
-		out += "required,"
+		out += ValidateStrRequired + ","
 	}
 
 	if in.MaxLength > 0 {
-		out += "maxLength=" + cast.ToString(in.MaxLength) + ","
+		out += ValidateStrMaxLength + "=" + cast.ToString(in.MaxLength) + ","
 	}
 
 	if in.MinLength > 0 {
-		out += "minLength=" + cast.ToString(in.MinLength) + ","
+		out += ValidateStrMinLength + "=" + cast.ToString(in.MinLength) + ","
 	}
 
 	if in.MustHaveChars != "" {
-		out += "mustHaveChars=" + in.MustHaveChars + ","
+		out += ValidateStrMustHaveChars + "=" + in.MustHaveChars + ","
 	}
 
 	if in.CantHaveChars != "" {
-		out += "cantHaveChars=" + in.CantHaveChars + ","
+		out += ValidateStrCantHaveChars + "=" + in.CantHaveChars + ","
 	}
 
 	if in.OnlyHaveChars != "" {
-		out += "onlyHaveChars=" + in.OnlyHaveChars + ","
+		out += ValidateStrOnlyHaveChars + "=" + in.OnlyHaveChars + ","
 	}
 
-	if in.Type == typeFloat || in.Type == typeInt {
-		out += "greaterThan=" + cast.ToString(in.GreaterThan) + ","
+	if (in.Type == typeFloat || in.Type == typeInt) && in.GreaterThan != nil {
+		out += ValidateStrGreaterThan + "=" + cast.ToString(in.GreaterThan) + ","
 	}
 
-	if in.Type == typeFloat || in.Type == typeInt {
-		out += "lessThan=" + cast.ToString(in.LessThan) + ","
+	if (in.Type == typeFloat || in.Type == typeInt) && in.LessThan != nil {
+		out += ValidateStrLessThan + "=" + cast.ToString(in.LessThan) + ","
 	}
 
 	return strings.Trim(out, ",")

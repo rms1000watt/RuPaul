@@ -34,7 +34,13 @@ Testing Purposes
 
 ```sh
 clear && rm -rf out && go run main.go generate -f examples/rupaul.yml
-PORT=9999 PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rupaul-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH && cp -r out/* $PROJECT_PATH && go run $PROJECT_PATH/main.go serve'
+PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rupaul-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH && cp -r out/* $PROJECT_PATH'
+
+cd ../rupaul-test && go run main.go serve
+
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"score":123.123}' localhost:8080/person
 ```
 
 **WIP**

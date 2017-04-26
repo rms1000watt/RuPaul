@@ -25,6 +25,13 @@ Data:
     Required: true
     Hashed: true
     MaxLength: 50
+  Age:
+    Type: int
+    Required: true
+    GreaterThan: 0
+  Account:
+    Type: float64
+    Required: true
 
 
 Connectors:
@@ -49,6 +56,8 @@ APIs:
         - first_name
         - middle_name
         - last_name
+        - age
+        - account
         Connector: postgres-1
         Methods:
         - Options

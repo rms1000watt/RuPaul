@@ -8,7 +8,7 @@ func ServerHandler() http.Handler {
 	return mux
 }
 
-{{range $path := .API.Paths}}// curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:9999/{{$path.Name}}
+{{range $path := .API.Paths}}// curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/{{$path.Name}}
 func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Starting {{$path.Name | Title}}Handler...")
 
@@ -19,9 +19,6 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, ErrorJSON("Input Error"), http.StatusInternalServerError)
 		return
 	}
-
-	// Transform first, then Validate
-	// TODO: Transform function
 
 	ok, msg, err := Validate({{$path.Name}}Input)
 	if err != nil {
@@ -34,11 +31,13 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Failed validation:", msg)
 		http.Error(w, ErrorJSON("Invalid Input"), http.StatusBadRequest)
 		return
-	}
+	}	
 
-	// Work magic with input and convert to output
+	// TODO: Transform function
 
-	// JSON Marshal output to user
+	// Developer make updates here...
+
+	// TODO: JSON Marshal output
 
 	fmt.Println("Finished {{$path.Name | Title}}Handler!")
 }
