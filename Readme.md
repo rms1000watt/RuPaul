@@ -38,9 +38,14 @@ PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rupaul-test bash -c 'rm
 
 cd ../rupaul-test && go run main.go serve
 
+# Fails
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33}' localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStarStarStarStarStarStarStarStarStarStarStarStar","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
+
+# Success
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
 ```
 
 **WIP**

@@ -8,7 +8,7 @@ Data:
     Default:
     Required: true
     Encrypted: false
-    Hashed: false
+    Hash: false
     MaxLength: 50
     MinLength: 0
     MustHaveChars:
@@ -23,7 +23,7 @@ Data:
   LastName:
     Type: string
     Required: true
-    Hashed: true
+    Hash: true
     MaxLength: 50
   Age:
     Type: int

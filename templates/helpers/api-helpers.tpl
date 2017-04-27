@@ -1,5 +1,7 @@
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"fmt"
 	"reflect"
 	"strings"
@@ -56,8 +58,7 @@ func Validate(in interface{}) (ok bool, msg string, err error) {
 	v := reflect.ValueOf(in)
 
 	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		tag := field.Tag.Get(TagNameValidate)
+		tag := t.Field(i).Tag.Get(TagNameValidate)
 
 		if tag == "" || tag == "-" || tag == "_" || tag == " " {
 			continue
@@ -73,21 +74,21 @@ func Validate(in interface{}) (ok bool, msg string, err error) {
 				}
 			}
 
-			switch field.Type {
+			switch v.Field(i).Elem().Type() {
 			case TypeOfString:
-				if vMsg := ValidateString(param, v.Field(i).String()); vMsg != "" {
+				if vMsg := ValidateString(param, v.Field(i).Elem().String()); vMsg != "" {
 					return false, vMsg, nil
 				}
 			case TypeOfInt:
-				if vMsg := ValidateInt(param, int(v.Field(i).Int())); vMsg != "" {
+				if vMsg := ValidateInt(param, int(v.Field(i).Elem().Int())); vMsg != "" {
 					return false, vMsg, nil
 				}
 			case TypeOfFloat32:
-				if vMsg := ValidateFloat32(param, float32(v.Field(i).Float())); vMsg != "" {
+				if vMsg := ValidateFloat32(param, float32(v.Field(i).Elem().Float())); vMsg != "" {
 					return false, vMsg, nil
 				}
 			case TypeOfFloat64:
-				if vMsg := ValidateFloat64(param, v.Field(i).Float()); vMsg != "" {
+				if vMsg := ValidateFloat64(param, v.Field(i).Elem().Float()); vMsg != "" {
 					return false, vMsg, nil
 				}
 			}
@@ -182,8 +183,7 @@ func Transform(in interface{}) (out interface{}, err error) {
 	v := reflect.ValueOf(in)
 
 	for i := 0; i < t.NumField(); i++ {
-		field := t.Field(i)
-		tag := field.Tag.Get(TagNameTransform)
+		tag := t.Field(i).Tag.Get(TagNameTransform)
 
 		if tag == "" || tag == "-" || tag == "_" || tag == " " {
 			continue
@@ -193,32 +193,28 @@ func Transform(in interface{}) (out interface{}, err error) {
 		for _, param := range params {
 			fmt.Printf("Transforming: %s - %s\n", v.Type().Field(i).Name, param)
 
-			// switch field.Type {
-			// case TypeOfString:
-			// 	if vMsg := TransformString(param, v.Field(i).String()); vMsg != "" {
-			// 		return false, vMsg, nil
-			// 	}
-			// case TypeOfInt:
-			// 	if vMsg := TransformInt(param, int(v.Field(i).Int())); vMsg != "" {
-			// 		return false, vMsg, nil
-			// 	}
-			// case TypeOfFloat32:
-			// 	if vMsg := TransformFloat32(param, float32(v.Field(i).Float())); vMsg != "" {
-			// 		return false, vMsg, nil
-			// 	}
-			// case TypeOfFloat64:
-			// 	if vMsg := TransformFloat64(param, v.Field(i).Float()); vMsg != "" {
-			// 		return false, vMsg, nil
-			// 	}
-			// case TypeOfBool:
-			// 	if vMsg := TranformBool(param, v.Field(i).Float()); vMsg != "" {
-			// 		return false, vMsg, nil
-			// 	}
-			// }
+			switch v.Field(i).Elem().Type() {
+			case TypeOfString:
+				if err := TransformString(param, v.Field(i).Elem()); err != nil {
+					return in, err
+				}
+			}
 		}
 	}
 
 	return in, nil
+}
+
+func TransformString(param string, value reflect.Value) (err error) {
+	k, _ := getTagKV(param)
+
+	switch k {
+	case TransformStrHash:
+		hashBytes := sha256.New().Sum([]byte(value.String()))
+		value.SetString(base64.URLEncoding.EncodeToString(hashBytes))
+	}
+
+	return
 }
 
 func getTagKV(param string) (k, v string) {

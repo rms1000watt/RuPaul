@@ -11,6 +11,7 @@ import (
 const (
 	TransformStrEncrypt      = "encrypt"
 	TransformStrHash         = "hash"
+	TransformStrPasswordHash = "passwordHash"
 	TransformStrTruncate     = "truncate"
 	TransformStrTrimChars    = "trimChars"
 	TransformStrDefault      = "default"
