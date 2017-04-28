@@ -27,6 +27,7 @@ type Data struct {
 	TrimChars    string `yaml:"TrimChars"`
 	Truncate     int    `yaml:"Truncate"`
 	Encrypt      bool   `yaml:"Encrypt"`
+	Decrypt      bool   `yaml:"Decrypt"`
 	PasswordHash bool   `yaml:"PasswordHash"`
 	Hash         bool   `yaml:"Hash"`
 	Default      string `yaml:"Default"`

@@ -10,6 +10,7 @@ import (
 
 const (
 	TransformStrEncrypt      = "encrypt"
+	TransformStrDecrypt      = "decrypt"
 	TransformStrHash         = "hash"
 	TransformStrPasswordHash = "passwordHash"
 	TransformStrTruncate     = "truncate"
@@ -119,6 +120,10 @@ func GenTransformStr(in Data) (out string) {
 	// TODO: Put all of these into constants and import in helpers.tpl
 	if in.Encrypt {
 		out += TransformStrEncrypt + ","
+	}
+
+	if in.Decrypt {
+		out += TransformStrDecrypt + ","
 	}
 
 	if in.Hash {

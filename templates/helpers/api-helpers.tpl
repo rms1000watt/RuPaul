@@ -1,10 +1,14 @@
 
 import (
+	"crypto/cipher"
 	"crypto/sha256"
-	"encoding/base64"
 	"fmt"
 	"reflect"
 	"strings"
+
+	"encoding/hex"
+
+	"crypto/aes"
 
 	"github.com/spf13/cast"
 )
@@ -13,6 +17,7 @@ const (
 	TagNameValidate             = "validate"
 	TagNameTransform            = "transform"
 	TransformStrEncrypt         = "encrypt"
+	TransformStrDecrypt         = "decrypt"
 	TransformStrHash            = "hash"
 	TransformStrTruncate        = "truncate"
 	TransformStrTrimChars       = "trimChars"
@@ -210,10 +215,84 @@ func TransformString(param string, value reflect.Value) (err error) {
 
 	switch k {
 	case TransformStrHash:
-		hashBytes := sha256.New().Sum([]byte(value.String()))
-		value.SetString(base64.URLEncoding.EncodeToString(hashBytes))
+		hashBytes32 := sha256.Sum256([]byte(value.String()))
+		value.SetString(hex.EncodeToString(hashBytes32[:]))
+	case TransformStrEncrypt:
+		if value.String() == "" {
+			return
+		}
+		if err := EncryptReflectValue(value); err != nil {
+			fmt.Println("Failed Encryption...")
+			return err
+		}
+	case TransformStrDecrypt:
+		if value.String() == "" {
+			return
+		}
+		if err := DecryptReflectValue(value); err != nil {
+			fmt.Println("Failed Decryption...")
+			return err
+		}
 	}
 
+	return
+}
+
+func EncryptReflectValue(value reflect.Value) (err error) {
+	fmt.Println("DONT USE THIS KEY IN PRODUCTION.. FETCH KEY FROM PKI")
+	key := []byte("AES256Key-32Characters1234567890")
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return err
+	}
+
+	nonce := []byte("DON'T USE ME")
+	fmt.Println("DONT USE THIS NONCE IN PRODUCTION.. GENERATE AND STORE RANDOM ONE")
+	// Never use more than 2^32 random nonces with a given key because of the risk of a repeat.
+	// nonce := make([]byte, 12)
+	// if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
+	// 	return err
+	// }
+
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return err
+	}
+
+	cipherBytes := aesgcm.Seal(nil, nonce, []byte(value.String()), nil)
+
+	value.SetString(hex.EncodeToString(cipherBytes))
+	return
+}
+
+func DecryptReflectValue(value reflect.Value) (err error) {
+	fmt.Println("DONT USE THIS KEY IN PRODUCTION.. FETCH KEY FROM PKI")
+	key := []byte("AES256Key-32Characters1234567890")
+	ciphertext, err := hex.DecodeString(value.String())
+	if err != nil {
+		return err
+	}
+
+	nonce := []byte("DON'T USE ME")
+	fmt.Println("DONT USE THIS NONCE IN PRODUCTION.. FETCH THE ONE FOR THIS ENTRY")
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		return err
+	}
+
+	aesgcm, err := cipher.NewGCM(block)
+	if err != nil {
+		return err
+	}
+
+	plaintext, err := aesgcm.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		return err
+	}
+
+	value.SetString(string(plaintext))
 	return
 }
 

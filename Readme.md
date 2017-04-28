@@ -46,6 +46,7 @@ curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStar
 
 # Success
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' localhost:8080/person
 ```
 
 **WIP**

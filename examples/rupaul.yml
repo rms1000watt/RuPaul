@@ -36,6 +36,10 @@ Data:
     Type: string
     Required: true
     PasswordHash: true
+  Gossip:
+    Type: string
+    Encrypt: true
+    Decrypt: true
 
 
 Connectors:
@@ -63,6 +67,7 @@ APIs:
         - age
         - account
         - password
+        - gossip
         Connector: postgres-1
         Methods:
         - Options
