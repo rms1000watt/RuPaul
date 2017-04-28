@@ -25,6 +25,7 @@ type Data struct {
 	LessThan      *int   `yaml:"LessThan"`
 	// Transforms
 	TrimChars    string `yaml:"TrimChars"`
+	TrimSpace    bool   `yaml:"TrimSpace"`
 	Truncate     int    `yaml:"Truncate"`
 	Encrypt      bool   `yaml:"Encrypt"`
 	Decrypt      bool   `yaml:"Decrypt"`

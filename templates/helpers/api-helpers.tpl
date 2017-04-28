@@ -19,8 +19,10 @@ const (
 	TransformStrEncrypt         = "encrypt"
 	TransformStrDecrypt         = "decrypt"
 	TransformStrHash            = "hash"
+	TransformStrPasswordHash    = "passwordHash"
 	TransformStrTruncate        = "truncate"
 	TransformStrTrimChars       = "trimChars"
+	TransformStrTrimSpace       = "trimSpace"
 	TransformStrDefault         = "default"
 	ValidateStrMaxLength        = "maxLength"
 	ValidateStrMinLength        = "minLength"
@@ -198,6 +200,18 @@ func Transform(in interface{}) (out interface{}, err error) {
 		for _, param := range params {
 			fmt.Printf("Transforming: %s - %s\n", v.Type().Field(i).Name, param)
 
+			key, val := getTagKV(param)
+			if v.Field(i).Pointer() == 0 && key == TransformStrDefault {
+				if err := SetDefaultValue(v.Field(i), val); err != nil {
+					return in, err
+				}
+				continue
+			}
+
+			if v.Field(i).Pointer() == 0 {
+				return in, err
+			}
+
 			switch v.Field(i).Elem().Type() {
 			case TypeOfString:
 				if err := TransformString(param, v.Field(i).Elem()); err != nil {
@@ -210,8 +224,13 @@ func Transform(in interface{}) (out interface{}, err error) {
 	return in, nil
 }
 
+func SetDefaultValue(value reflect.Value, defaultStr string) (err error) {
+	// TODO: Finish this
+	return
+}
+
 func TransformString(param string, value reflect.Value) (err error) {
-	k, _ := getTagKV(param)
+	k, v := getTagKV(param)
 
 	switch k {
 	case TransformStrHash:
@@ -231,6 +250,24 @@ func TransformString(param string, value reflect.Value) (err error) {
 		}
 		if err := DecryptReflectValue(value); err != nil {
 			fmt.Println("Failed Decryption...")
+			return err
+		}
+	case TransformStrTrimChars:
+		value.SetString(strings.Trim(value.String(), v))
+	case TransformStrTrimSpace:
+		value.SetString(strings.TrimSpace(value.String()))
+	case TransformStrTruncate:
+		truncateLength := cast.ToInt(v)
+		if len(value.String()) < truncateLength {
+			return
+		}
+		value.SetString(value.String()[:truncateLength])
+	case TransformStrPasswordHash:
+		if value.String() == "" {
+			return
+		}
+		if err := PasswordHashReflectValue(value); err != nil {
+			fmt.Println("Failed Password Hashing..")
 			return err
 		}
 	}
@@ -293,6 +330,11 @@ func DecryptReflectValue(value reflect.Value) (err error) {
 	}
 
 	value.SetString(string(plaintext))
+	return
+}
+
+func PasswordHashReflectValue(value reflect.Value) (err error) {
+	// TODO: Finish this
 	return
 }
 

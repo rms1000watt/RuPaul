@@ -15,6 +15,7 @@ const (
 	TransformStrPasswordHash = "passwordHash"
 	TransformStrTruncate     = "truncate"
 	TransformStrTrimChars    = "trimChars"
+	TransformStrTrimSpace    = "trimSpace"
 	TransformStrDefault      = "default"
 	ValidateStrMaxLength     = "maxLength"
 	ValidateStrMinLength     = "minLength"
@@ -128,6 +129,14 @@ func GenTransformStr(in Data) (out string) {
 
 	if in.Hash {
 		out += TransformStrHash + ","
+	}
+
+	if in.PasswordHash {
+		out += TransformStrPasswordHash + ","
+	}
+
+	if in.TrimSpace {
+		out += TransformStrTrimSpace + ","
 	}
 
 	if in.Truncate > 0 {
