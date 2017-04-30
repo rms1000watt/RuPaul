@@ -8,7 +8,7 @@ func ServerHandler() http.Handler {
 	return mux
 }
 
-{{range $path := .API.Paths}}// curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/{{$path.Name}}
+{{range $path := .API.Paths}}
 func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Starting {{$path.Name | Title}}Handler...")
 
@@ -49,7 +49,20 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 
 	// Developer make updates here...
 
-	// TODO: JSON Marshal output
+	{{$path.Name | ToLower}}Output := get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input)
+
+	jsonBytes, err := json.Marshal({{$path.Name | ToLower}}Output)
+	if err != nil {
+		fmt.Println("Failed marshalling to JSON:", err)
+		http.Error(w, ErrorJSON("JSON Marshal Error"), http.StatusInternalServerError)
+		return
+	}
+
+	if _, err := w.Write(jsonBytes); err != nil {
+		fmt.Println("Failed writing to response writer:", err)
+		http.Error(w, ErrorJSON("Failed writing to output"), http.StatusInternalServerError)
+		return
+	}
 
 	fmt.Println("Finished {{$path.Name | Title}}Handler!")
 }

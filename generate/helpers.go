@@ -1,6 +1,9 @@
 package generate
 
 import (
+	"bytes"
+	"fmt"
+	"regexp"
 	"strings"
 	"unicode"
 	"unicode/utf8"
@@ -200,6 +203,48 @@ func HandleQuotes(value, typeStr string) string {
 
 func NormalizeConfig() {
 
+}
+
+func OutputInInputs(outputName string, inputs []Data) bool {
+	for _, input := range inputs {
+		if input.Name == outputName {
+			return true
+		}
+	}
+	return false
+}
+
+func EmptyValue(dataType string) (out string) {
+	switch dataType {
+	case "string":
+		return "\"\""
+	case "int":
+		return "0"
+	case "float32":
+		return "0.0"
+	case "float64":
+		return "0.0"
+	case "bool":
+		return "false"
+	}
+	fmt.Println("DATA TYPE NOT DEFINED:", dataType)
+	return "\"\""
+}
+
+// Courtesy of https://github.com/etgryphon/stringUp/blob/master/stringUp.go
+var camelingRegex = regexp.MustCompile("[0-9A-Za-z]+")
+
+func ToCamelCase(src string) (out string) {
+	byteSrc := []byte(src)
+	chunks := camelingRegex.FindAll(byteSrc, -1)
+	for idx, val := range chunks {
+		if idx > 0 {
+			chunks[idx] = bytes.Title(val)
+		}
+	}
+	out = string(bytes.Join(chunks, nil))
+	out = strings.ToLower(string(out[0])) + string(out[1:])
+	return out
 }
 
 // Courtesy of https://github.com/fatih/camelcase/blob/master/camelcase.go

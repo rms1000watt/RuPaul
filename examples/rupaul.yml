@@ -40,6 +40,8 @@ Data:
     Type: string
     Encrypt: true
     Decrypt: true
+  Ticket:
+    Type: string
 
 
 Connectors:
@@ -76,6 +78,11 @@ APIs:
         Outputs:
         - first_name
         - middle_name
+        - ticket
+        - last_name
+        - age
+        - account
+        - gossip
 
 CommandLine:
   AppName: "RuPaulTest"

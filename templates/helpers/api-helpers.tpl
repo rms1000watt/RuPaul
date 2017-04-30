@@ -1,6 +1,7 @@
 
 import (
 	"crypto/cipher"
+	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
 	"reflect"
@@ -10,6 +11,7 @@ import (
 
 	"crypto/aes"
 
+	"github.com/magical/argon2"
 	"github.com/spf13/cast"
 )
 
@@ -334,7 +336,24 @@ func DecryptReflectValue(value reflect.Value) (err error) {
 }
 
 func PasswordHashReflectValue(value reflect.Value) (err error) {
-	// TODO: Finish this
+	salt, err := getRandomSalt()
+	if err != nil {
+		fmt.Println("Failed getting random salt:", err)
+		return err
+	}
+	key, err := argon2.Key([]byte(value.String()), []byte(salt), 2<<14-1, 1, 8, 64)
+	if err != nil {
+		fmt.Println("Failed to get argon2 key:", err)
+		return err
+	}
+	// Store these if you need to verify later
+	value.SetString(hex.EncodeToString(key))
+	return
+}
+
+func getRandomSalt() (salt []byte, err error) {
+	salt = make([]byte, 32)
+	_, err = rand.Read(salt)
 	return
 }
 
@@ -363,3 +382,19 @@ func onlyCharsInStr(onlyChars, in string) (out bool) {
 	}
 	return len(in) == 0
 }
+
+{{range $path := .API.Paths}}func get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input {{$path.Name | Title}}Input) ({{$path.Name | ToLower}}Output {{$path.Name | Title}}Output) {
+	{{range $output := $path.Outputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
+	{{if OutputInInputs $output.Name $path.Inputs}}if {{$path.Name | ToLower}}Input.{{$output.Name | Title}} != nil {
+		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input.{{$output.Name | Title}}
+	}{{end}}
+	
+	{{end}}
+
+	{{$path.Name | ToLower}}Output = {{$path.Name | Title}}Output{
+		{{range $output := $path.Outputs}}{{$output.Name | Title}}: {{$output.Name | ToCamelCase}},
+		{{end}}
+	}
+	return
+}
+{{end}}

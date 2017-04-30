@@ -19,6 +19,9 @@ ie.
 
 ```sh
 go get -u -v github.com/rms1000watt/rupaul
+go get -u -v github.com/magical/argon2
+go get -u -v github.com/spf13/cobra
+go get -u -v github.com/spf13/pflag
 ```
 
 ### Usage

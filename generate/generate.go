@@ -137,6 +137,9 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		"GenTransformStr":  GenTransformStr,
 		"HandleQuotes":     HandleQuotes,
 		"ToSnakeCase":      ToSnakeCase,
+		"ToCamelCase":      ToCamelCase,
+		"OutputInInputs":   OutputInInputs,
+		"EmptyValue":       EmptyValue,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)
@@ -203,5 +206,22 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		exec.Command("gofmt", "-w", completeFilePath).CombinedOutput()
 	}
 
+	RemoveUnusedFile(completeFilePath)
+
 	return nil
+}
+
+func RemoveUnusedFile(completeFilePath string) {
+	fileBytes, err := ioutil.ReadFile(completeFilePath)
+	if err != nil {
+		// Fail silently.. not a big deal
+		return
+	}
+
+	if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) {
+		if err := os.Remove(completeFilePath); err != nil {
+			// Fail silently.. not a big deal
+			return
+		}
+	}
 }
