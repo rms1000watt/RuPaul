@@ -45,17 +45,27 @@ const (
 )
 
 var (
-	dummyString  string
-	dummyInt     int
-	dummyFloat32 float32
-	dummyFloat64 float64
-	dummyBool    bool
+	dummyString   string
+	dummyInt      int
+	dummyFloat32  float32
+	dummyFloat64  float64
+	dummyBool     bool
+	dummyStringP  *string
+	dummyIntP     *int
+	dummyFloat32P *float32
+	dummyFloat64P *float64
+	dummyBoolP    *bool
 
-	TypeOfString  = reflect.TypeOf(dummyString)
-	TypeOfInt     = reflect.TypeOf(dummyInt)
-	TypeOfFloat32 = reflect.TypeOf(dummyFloat32)
-	TypeOfFloat64 = reflect.TypeOf(dummyFloat64)
-	TypeOfBool    = reflect.TypeOf(dummyBool)
+	TypeOfString   = reflect.TypeOf(dummyString)
+	TypeOfInt      = reflect.TypeOf(dummyInt)
+	TypeOfFloat32  = reflect.TypeOf(dummyFloat32)
+	TypeOfFloat64  = reflect.TypeOf(dummyFloat64)
+	TypeOfBool     = reflect.TypeOf(dummyBool)
+	TypeOfStringP  = reflect.TypeOf(dummyStringP)
+	TypeOfIntP     = reflect.TypeOf(dummyIntP)
+	TypeOfFloat32P = reflect.TypeOf(dummyFloat32P)
+	TypeOfFloat64P = reflect.TypeOf(dummyFloat64P)
+	TypeOfBoolP    = reflect.TypeOf(dummyBoolP)
 )
 
 func ErrorJSON(msg string) (out string) {
@@ -227,7 +237,24 @@ func Transform(in interface{}) (out interface{}, err error) {
 }
 
 func SetDefaultValue(value reflect.Value, defaultStr string) (err error) {
-	// TODO: Finish this
+	fmt.Println("value.Type()", value.Type())
+
+	// switch value.Type() {
+	// case TypeOfStringP:
+	// 	var stringP *string
+	// 	stringP = &defaultStr
+	// 	value.Set(reflect.ValueOf(stringP))
+	// case TypeOfIntP:
+	// 	value.SetInt(cast.ToInt64(defaultStr))
+	// case TypeOfFloat32P:
+	// 	fmt.Println("Unable to set default: Float32")
+	// case TypeOfFloat64P:
+	// 	value.SetFloat(cast.ToFloat64(defaultStr))
+	// case TypeOfBoolP:
+	// 	value.SetBool(cast.ToBool(defaultStr))
+	// default:
+	// 	fmt.Println("Unable to set default: no type defined")
+	// }
 	return
 }
 
@@ -384,16 +411,16 @@ func onlyCharsInStr(onlyChars, in string) (out bool) {
 }
 
 {{range $path := .API.Paths}}func get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input {{$path.Name | Title}}Input) ({{$path.Name | ToLower}}Output {{$path.Name | Title}}Output) {
-	{{range $output := $path.Outputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
-	{{if OutputInInputs $output.Name $path.Inputs}}if {{$path.Name | ToLower}}Input.{{$output.Name | Title}} != nil {
+	{{range $output := $path.Outputs}}{{if OutputInInputs $output.Name $path.Inputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
+	if {{$path.Name | ToLower}}Input.{{$output.Name | Title}} != nil {
 		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input.{{$output.Name | Title}}
 	}{{end}}
 	
 	{{end}}
 
 	{{$path.Name | ToLower}}Output = {{$path.Name | Title}}Output{
-		{{range $output := $path.Outputs}}{{$output.Name | Title}}: {{$output.Name | ToCamelCase}},
-		{{end}}
+		{{range $output := $path.Outputs}}{{if OutputInInputs $output.Name $path.Inputs}}{{$output.Name | Title}}: {{$output.Name | ToCamelCase}},
+		{{end}}{{end}}
 	}
 	return
 }

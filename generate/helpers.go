@@ -3,6 +3,8 @@ package generate
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
+	"os"
 	"regexp"
 	"strings"
 	"unicode"
@@ -292,4 +294,19 @@ func ToSnakeCase(src string) (out string) {
 	}
 
 	return strings.ToLower(strings.Join(entries, "_"))
+}
+
+func RemoveUnusedFile(completeFilePath string) {
+	fileBytes, err := ioutil.ReadFile(completeFilePath)
+	if err != nil {
+		// Fail silently.. not a big deal
+		return
+	}
+
+	if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) && bytes.Equal(fileBytes[:7], []byte("package")) {
+		if err := os.Remove(completeFilePath); err != nil {
+			// Fail silently.. not a big deal
+			return
+		}
+	}
 }

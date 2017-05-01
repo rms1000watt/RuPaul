@@ -206,22 +206,8 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		exec.Command("gofmt", "-w", completeFilePath).CombinedOutput()
 	}
 
+	// TODO: Remove this--be smarter about which files to write
 	RemoveUnusedFile(completeFilePath)
 
 	return nil
-}
-
-func RemoveUnusedFile(completeFilePath string) {
-	fileBytes, err := ioutil.ReadFile(completeFilePath)
-	if err != nil {
-		// Fail silently.. not a big deal
-		return
-	}
-
-	if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) {
-		if err := os.Remove(completeFilePath); err != nil {
-			// Fail silently.. not a big deal
-			return
-		}
-	}
 }
