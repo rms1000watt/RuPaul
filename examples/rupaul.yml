@@ -1,5 +1,6 @@
 Version: v0.1.0
 CopyrightHolder: Ryan Smith
+DockerPath: docker.io/rms1000watt/rupaul-test
 MainImportPath: github.com/rms1000watt/rupaul-test
 
 Data:

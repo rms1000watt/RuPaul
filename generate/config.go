@@ -4,6 +4,7 @@ package generate
 type Config struct {
 	Version         string          `yaml:"Version"`
 	MainImportPath  string          `yaml:"MainImportPath"`
+	DockerPath      string          `yaml:"DockerPath"`
 	CopyrightHolder string          `yaml:"CopyrightHolder"`
 	Datas           map[string]Data `yaml:"Data"`
 	APIs            map[string]API  `yaml:"APIs"`

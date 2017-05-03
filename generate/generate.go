@@ -111,6 +111,16 @@ func getTemplates(cfg Config) (templates []Template) {
 			Data:         yamlToTemplateCfg(cfg, key),
 		})
 		templates = append(templates, Template{
+			TemplateName: lowerKey + ".validate.go.tpl",
+			FileName:     "command.validate.go.tpl",
+			Data:         yamlToTemplateCfg(cfg, key),
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + ".transform.go.tpl",
+			FileName:     "command.transform.go.tpl",
+			Data:         yamlToTemplateCfg(cfg, key),
+		})
+		templates = append(templates, Template{
 			TemplateName: lowerKey + ".data.go.tpl",
 			FileName:     "command.data.go.tpl",
 			Data:         yamlToTemplateCfg(cfg, key),

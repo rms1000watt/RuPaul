@@ -20,14 +20,14 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	ok, msg, err := Validate({{$path.Name}}Input)
+	msg, err := Validate({{$path.Name}}Input)
 	if err != nil {
 		fmt.Println("Failed validating input:", err)
 		http.Error(w, ErrorJSON("Input Error"), http.StatusInternalServerError)
 		return
 	}
 
-	if !ok {
+	if msg != "" {
 		fmt.Println("Failed validation:", msg)
 		http.Error(w, ErrorJSON("Invalid Input"), http.StatusBadRequest)
 		return

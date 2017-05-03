@@ -13,3 +13,11 @@ go get -u -v {{.MainImportPath}}
 ```sh
 go run main.go
 ```
+
+### Deploy
+
+```sh
+go build
+docker build --rm -t --no-cache {{.DockerPath}}:{{.Version}} .
+docker push {{.DockerPath}}:{{.Version}}
+```
