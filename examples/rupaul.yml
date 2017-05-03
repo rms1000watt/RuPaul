@@ -45,6 +45,9 @@ Data:
     Decrypt: true
   Ticket:
     Type: string
+  ErrorCode:
+    Type: int
+    Default: -1
 
 
 Connectors:
@@ -74,6 +77,7 @@ APIs:
         - password
         - gossip
         - title
+        - error_code
         Connector: postgres-1
         Methods:
         - Options
@@ -88,6 +92,7 @@ APIs:
         - account
         - title
         - gossip
+        - error_code
 
 CommandLine:
   AppName: "RuPaulTest"

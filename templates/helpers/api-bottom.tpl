@@ -13,7 +13,7 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Starting {{$path.Name | Title}}Handler...")
 
 	// Assume JSON Serialization for now
-	{{$path.Name}}Input := {{$path.Name | Title}}Input{}
+	{{$path.Name}}Input := &{{$path.Name | Title}}Input{}
 	if err := json.NewDecoder(r.Body).Decode(&{{$path.Name}}Input); err != nil {
 		fmt.Println("Failed decoding input:", err)
 		http.Error(w, ErrorJSON("Input Error"), http.StatusInternalServerError)
@@ -33,17 +33,9 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 		return
 	}	
 
-	transformedInput, err := Transform({{$path.Name}}Input)
-	if err != nil {
+	if err := Transform({{$path.Name}}Input); err != nil {
 		fmt.Println("Failed transforming input:", err)
 		http.Error(w, ErrorJSON("Transform Error"), http.StatusInternalServerError)
-		return
-	}
-
-	{{$path.Name}}Input, ok = transformedInput.({{$path.Name | Title}}Input)
-	if !ok {
-		fmt.Printf("Failed interface type assertion")
-		http.Error(w, ErrorJSON("Interface Error"), http.StatusInternalServerError)
 		return
 	}
 

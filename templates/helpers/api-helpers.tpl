@@ -73,8 +73,8 @@ func ErrorJSON(msg string) (out string) {
 }
 
 func Validate(in interface{}) (ok bool, msg string, err error) {
-	t := reflect.TypeOf(in)
-	v := reflect.ValueOf(in)
+	t := reflect.TypeOf(in).Elem()
+	v := reflect.ValueOf(in).Elem()
 
 	for i := 0; i < t.NumField(); i++ {
 		tag := t.Field(i).Tag.Get(TagNameValidate)
@@ -197,9 +197,11 @@ func ValidateFloat64(param string, in float64) (msg string) {
 	return
 }
 
-func Transform(in interface{}) (out interface{}, err error) {
-	t := reflect.TypeOf(in)
-	v := reflect.ValueOf(in)
+func Transform(in interface{}) (err error) {
+	t := reflect.TypeOf(in).Elem()
+	v := reflect.ValueOf(in).Elem()
+
+	fmt.Println("t", t)
 
 	for i := 0; i < t.NumField(); i++ {
 		tag := t.Field(i).Tag.Get(TagNameTransform)
@@ -215,46 +217,44 @@ func Transform(in interface{}) (out interface{}, err error) {
 			key, val := getTagKV(param)
 			if v.Field(i).Pointer() == 0 && key == TransformStrDefault {
 				if err := SetDefaultValue(v.Field(i), val); err != nil {
-					return in, err
+					return err
 				}
 				continue
 			}
 
 			if v.Field(i).Pointer() == 0 {
-				return in, err
+				return err
 			}
 
 			switch v.Field(i).Elem().Type() {
 			case TypeOfString:
 				if err := TransformString(param, v.Field(i).Elem()); err != nil {
-					return in, err
+					return err
 				}
 			}
 		}
 	}
 
-	return in, nil
+	return
 }
 
 func SetDefaultValue(value reflect.Value, defaultStr string) (err error) {
-	fmt.Println("value.Type()", value.Type())
+	value.Set(reflect.New(value.Type().Elem()))
 
-	// switch value.Type() {
-	// case TypeOfStringP:
-	// 	var stringP *string
-	// 	stringP = &defaultStr
-	// 	value.Set(reflect.ValueOf(stringP))
-	// case TypeOfIntP:
-	// 	value.SetInt(cast.ToInt64(defaultStr))
-	// case TypeOfFloat32P:
-	// 	fmt.Println("Unable to set default: Float32")
-	// case TypeOfFloat64P:
-	// 	value.SetFloat(cast.ToFloat64(defaultStr))
-	// case TypeOfBoolP:
-	// 	value.SetBool(cast.ToBool(defaultStr))
-	// default:
-	// 	fmt.Println("Unable to set default: no type defined")
-	// }
+	switch value.Type() {
+	case TypeOfStringP:
+		value.Elem().SetString(defaultStr)
+	case TypeOfIntP:
+		value.Elem().SetInt(cast.ToInt64(defaultStr))
+	case TypeOfFloat32P:
+		fmt.Println("Unable to set default: Float32")
+	case TypeOfFloat64P:
+		value.Elem().SetFloat(cast.ToFloat64(defaultStr))
+	case TypeOfBoolP:
+		value.Elem().SetBool(cast.ToBool(defaultStr))
+	default:
+		fmt.Println("Unable to set default: no type defined")
+	}
 	return
 }
 
@@ -410,7 +410,11 @@ func onlyCharsInStr(onlyChars, in string) (out bool) {
 	return len(in) == 0
 }
 
-{{range $path := .API.Paths}}func get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input {{$path.Name | Title}}Input) ({{$path.Name | ToLower}}Output {{$path.Name | Title}}Output) {
+{{range $path := .API.Paths}}func get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input *{{$path.Name | Title}}Input) ({{$path.Name | ToLower}}Output {{$path.Name | Title}}Output) {
+	if {{$path.Name | ToLower}}Input == nil {
+		return
+	}
+	
 	{{range $output := $path.Outputs}}{{if OutputInInputs $output.Name $path.Inputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
 	if {{$path.Name | ToLower}}Input.{{$output.Name | Title}} != nil {
 		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input.{{$output.Name | Title}}
