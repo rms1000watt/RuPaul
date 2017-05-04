@@ -1,33 +1,38 @@
 package {{.CommandLine.Command.Name}}
 
 {{range $path := .API.Paths}}
-type {{$path.Name | Title}}Input struct {
-    {{range $input := $path.Inputs}}{{$input.Name}} *{{$input.Type}} `json:"{{$input.Name | ToSnakeCase}},omitempty" transform:"{{GenTransformStr $input}}" validate:"{{GenValidationStr $input}}"`
+{{range $method := $path.Methods}}
+type {{$path.Name | Title}}Input{{$method.Name | ToUpper}} struct {
+    {{range $input := $method.Inputs}}{{$input.Name}} *{{$input.Type}} `json:"{{$input.DisplayName}},omitempty" validate:"{{GenValidationStr $input}}" transform:"{{GenTransformStr $input}}"`
     {{end}}
 }
 
-type {{$path.Name | Title}}Output struct {
-    {{range $output := $path.Outputs}}{{$output.Name}} {{$output.Type}} `json:"{{$output.Name | ToSnakeCase}},omitempty"`
+type {{$path.Name | Title}}Output{{$method.Name | ToUpper}} struct {
+    {{range $output := $method.Outputs}}{{$output.Name}} {{$output.Type}} `json:"{{$output.DisplayName}},omitempty"`
     {{end}}
 }
 {{end}}
+{{end}}
 
-{{range $path := .API.Paths}}func get{{$path.Name | Title}}Output({{$path.Name | ToLower}}Input *{{$path.Name | Title}}Input) ({{$path.Name | ToLower}}Output {{$path.Name | Title}}Output) {
-	if {{$path.Name | ToLower}}Input == nil {
+{{range $path := .API.Paths}}
+{{range $method := $path.Methods}}
+func get{{$path.Name | Title}}Output{{$method.Name | ToUpper}}({{$path.Name | ToLower}}Input{{$method.Name | ToUpper}} *{{$path.Name | Title}}Input{{$method.Name | ToUpper}}) ({{$path.Name | ToLower}}Output{{$method.Name | ToUpper}} {{$path.Name | Title}}Output{{$method.Name | ToUpper}}) {
+	if {{$path.Name | ToLower}}Input{{$method.Name | ToUpper}} == nil {
 		return
 	}
 	
-	{{range $output := $path.Outputs}}{{if OutputInInputs $output.Name $path.Inputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
-	if {{$path.Name | ToLower}}Input.{{$output.Name | Title}} != nil {
-		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input.{{$output.Name | Title}}
+	{{range $output := $method.Outputs}}{{if OutputInInputs $output.Name $method.Inputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
+	if {{$path.Name | ToLower}}Input{{$method.Name | ToUpper}}.{{$output.Name | Title}} != nil {
+		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input{{$method.Name | ToUpper}}.{{$output.Name | Title}}
 	}{{end}}
 	
 	{{end}}
 
-	{{$path.Name | ToLower}}Output = {{$path.Name | Title}}Output{
-		{{range $output := $path.Outputs}}{{if OutputInInputs $output.Name $path.Inputs}}{{$output.Name | Title}}: {{$output.Name | ToCamelCase}},
+	{{$path.Name | ToLower}}Output{{$method.Name | ToUpper}} = {{$path.Name | Title}}Output{{$method.Name | ToUpper}}{
+		{{range $output := $method.Outputs}}{{if OutputInInputs $output.Name $method.Inputs}}{{$output.Name | Title}}: {{$output.Name | ToCamelCase}},
 		{{end}}{{end}}
 	}
 	return
 }
+{{end}}
 {{end}}

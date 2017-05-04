@@ -142,6 +142,7 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	funcMap := template.FuncMap{
 		"ToLower":          strings.ToLower,
 		"Title":            strings.Title,
+		"ToUpper":          strings.ToUpper,
 		"TimeNowYear":      time.Now().Year,
 		"GenValidationStr": GenValidationStr,
 		"GenTransformStr":  GenTransformStr,

@@ -5,6 +5,7 @@ MainImportPath: github.com/rms1000watt/rupaul-test
 
 Data:
   FirstName:
+    DisplayName: first_name
     Type: string
     Default:
     Required: true
@@ -30,6 +31,7 @@ Data:
     Type: string
     Default: Mrs.
   Age:
+    DisplayName: age
     Type: int
     Required: true
     GreaterThan: 0
@@ -52,14 +54,15 @@ Data:
 
 
 Connectors:
-  - Name: postgres-1
+  Postgres1:
+    Name: postgres1
     Type: Postgres
     URL: http://localhost:8181/
     Password: postgres
 
 APIs:
   Rest1:
-    Name: rest-1
+    Name: rest1
     Type: REST
     Serialization: JSON
     Middlewares: 
@@ -69,31 +72,53 @@ APIs:
     Paths:
       - Name: person
         Pattern: /person
-        Inputs:
-        - first_name
-        - middle_name
-        - last_name
-        - age
-        - account
-        - password
-        - gossip
-        - title
-        - error_code
-        Connector: postgres-1
         Methods:
-        - Options
-        - Get
-        - Post
-        Outputs:
-        - first_name
-        - middle_name
-        - ticket
-        - last_name
-        - age
-        - account
-        - title
-        - gossip
-        - error_code
+          Get:
+            Middlewares:
+            - Logging
+            Inputs:
+            - FirstName
+            - LastName
+            Connector: postgres1
+            Outputs:
+            - Age
+          Post:
+            Middlewares:
+            - CSRF
+            Inputs:
+            - FirstName
+            - LastName
+            - Age
+            Connector: postgres1
+            Outputs:
+            - FirstName
+            - LastName
+            - Age
+        # Inputs:
+        # - first_name
+        # - middle_name
+        # - last_name
+        # - age
+        # - account
+        # - password
+        # - gossip
+        # - title
+        # - error_code
+        # Connector: postgres1
+        # Methods:
+        # - Options
+        # - Get
+        # - Post
+        # Outputs:
+        # - first_name
+        # - middle_name
+        # - ticket
+        # - last_name
+        # - age
+        # - account
+        # - title
+        # - gossip
+        # - error_code
 
 CommandLine:
   AppName: "RuPaulTest"
@@ -113,7 +138,7 @@ CommandLine:
       Name: serve
       ShortDescription: Start HTTP Server
       LongDescription: Start HTTP Server for serving
-      API: rest-1
+      API: rest1
       # Server requires Host & Port defined
       Args: 
         Host:

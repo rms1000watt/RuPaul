@@ -13,8 +13,9 @@ type Config struct {
 }
 
 type Data struct {
-	Name string `yaml:"Name"`
-	Type string `yaml:"Type"`
+	Name        string `yaml:"Name"`
+	DisplayName string `yaml:"DisplayName"`
+	Type        string `yaml:"Type"`
 	// Validations
 	Required      bool   `yaml:"Required"`
 	MaxLength     int    `yaml:"MaxLength"`
@@ -44,12 +45,16 @@ type API struct {
 }
 
 type Path struct {
-	Name      string   `yaml:"Name"`
-	Pattern   string   `yaml:"Pattern"`
-	Inputs    []string `yaml:"Inputs"`
-	Connector string   `yaml:"Connector"`
-	Methods   []string `yaml:"Methods"`
-	Outputs   []string `yaml:"Outputs"`
+	Name    string            `yaml:"Name"`
+	Pattern string            `yaml:"Pattern"`
+	Methods map[string]Method `yaml:"Methods"`
+}
+
+type Method struct {
+	Middlewares []string `yaml:"Middlewares"`
+	Inputs      []string `yaml:"Inputs"`
+	Connector   string   `yaml:"Connector"`
+	Outputs     []string `yaml:"Outputs"`
 }
 
 type CommandLine struct {
@@ -102,10 +107,15 @@ type TemplateAPI struct {
 }
 
 type TemplatePath struct {
-	Name      string
-	Pattern   string
-	Inputs    []Data
-	Connector string
-	Methods   []string
-	Outputs   []Data
+	Name    string
+	Pattern string
+	Methods []TemplateMethod
+}
+
+type TemplateMethod struct {
+	Name        string
+	Middlewares []string
+	Inputs      []Data
+	Connector   string
+	Outputs     []Data
 }

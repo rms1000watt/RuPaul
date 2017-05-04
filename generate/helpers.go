@@ -55,25 +55,37 @@ func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 func yamlToTemplateAPI(yamlAPI API, cfg Config) (templateAPI TemplateAPI) {
 	templatePaths := []TemplatePath{}
 	for _, yamlPath := range yamlAPI.Paths {
-		inputs := []Data{}
-		for _, input := range yamlPath.Inputs {
-			input = toUpperCamelCase(input)
-			inputs = append(inputs, massageData(input, cfg.Datas[input]))
-		}
 
-		outputs := []Data{}
-		for _, output := range yamlPath.Outputs {
-			output = toUpperCamelCase(output)
-			outputs = append(outputs, massageData(output, cfg.Datas[output]))
+		methods := []TemplateMethod{}
+		for methodKey, methodValue := range yamlPath.Methods {
+			inputs := []Data{}
+			for _, input := range methodValue.Inputs {
+				input = toUpperCamelCase(input)
+				inputs = append(inputs, massageData(input, cfg.Datas[input]))
+			}
+
+			outputs := []Data{}
+			for _, output := range methodValue.Outputs {
+				output = toUpperCamelCase(output)
+				outputs = append(outputs, massageData(output, cfg.Datas[output]))
+			}
+
+			methods = append(methods, TemplateMethod{
+				Name:        strings.ToLower(methodKey),
+				Inputs:      inputs,
+				Outputs:     outputs,
+				Middlewares: methodValue.Middlewares,
+				Connector:   methodValue.Connector,
+			})
 		}
 
 		templatePaths = append(templatePaths, TemplatePath{
-			Name:      yamlPath.Name,
-			Pattern:   yamlPath.Pattern,
-			Connector: yamlPath.Connector,
-			Methods:   yamlPath.Methods,
-			Inputs:    inputs,
-			Outputs:   outputs,
+			Name:    yamlPath.Name,
+			Pattern: yamlPath.Pattern,
+			// Connector: yamlPath.Connector,
+			Methods: methods,
+			// Inputs:    inputs,
+			// Outputs:   outputs,
 		})
 	}
 
@@ -113,6 +125,12 @@ func toUpperCamelCase(in string) (out string) {
 func massageData(name string, in Data) (out Data) {
 	out = in
 	out.Name = name
+
+	if in.DisplayName == "" {
+		out.DisplayName = ToSnakeCase(name)
+	} else {
+		out.DisplayName = in.DisplayName
+	}
 
 	// Fill in Defaults
 	if out.Type == "" {
