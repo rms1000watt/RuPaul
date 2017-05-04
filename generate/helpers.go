@@ -328,3 +328,30 @@ func RemoveUnusedFile(completeFilePath string) {
 		}
 	}
 }
+
+func GetHTTPMethod(method string) (httpMethod string) {
+	method = strings.ToLower(method)
+	switch method {
+	case "connect":
+		return "MethodConnect"
+	case "delete":
+		return "MethodDelete"
+	case "get":
+		return "MethodGet"
+	case "head":
+		return "MethodHead"
+	case "options":
+		return "MethodOptions"
+	case "patch":
+		return "MethodPatch"
+	case "post":
+		return "MethodPost"
+	case "put":
+		return "MethodPut"
+	case "trace":
+		return "MethodTrace"
+	}
+
+	fmt.Println("BAD METHOD PROVIDED!!", method)
+	return
+}

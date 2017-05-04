@@ -151,6 +151,7 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		"ToCamelCase":      ToCamelCase,
 		"OutputInInputs":   OutputInInputs,
 		"EmptyValue":       EmptyValue,
+		"GetHTTPMethod":    GetHTTPMethod,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)
