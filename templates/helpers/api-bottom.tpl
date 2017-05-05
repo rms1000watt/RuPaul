@@ -15,7 +15,9 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	{{range $method := $path.Methods}}case http.{{GetHTTPMethod $method.Name}}:
 		{{$path.Name | Title}}Handler{{$method.Name | ToUpper}}(w, r)
-	{{end}}default:
+	{{end}}case http.MethodOptions:
+		{{$path.Name | Title}}HandlerOPTIONS(w, r)
+	default:
 		fmt.Println("Method not allowed:", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
 	}
@@ -25,11 +27,15 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 {{end}}
 
 {{range $path := .API.Paths}}
+func {{$path.Name | Title}}HandlerOPTIONS(w http.ResponseWriter, r *http.Request) {
+	// Handle Options...
+}
+
 {{range $method := $path.Methods}}
 func {{$path.Name | Title}}Handler{{$method.Name | ToUpper}}(w http.ResponseWriter, r *http.Request) {
 	// Assume JSON Serialization for now
 	input := &{{$path.Name | Title}}Input{{$method.Name | ToUpper}}{}
-	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
+	if err := Unmarshal(r, input); err != nil {
 		fmt.Println("Failed decoding input:", err)
 		http.Error(w, ErrorJSON("Input Error"), http.StatusInternalServerError)
 		return
@@ -70,8 +76,6 @@ func {{$path.Name | Title}}Handler{{$method.Name | ToUpper}}(w http.ResponseWrit
 		http.Error(w, ErrorJSON("Failed writing to output"), http.StatusInternalServerError)
 		return
 	}
-
-	
 }
 {{end}}
 {{end}}

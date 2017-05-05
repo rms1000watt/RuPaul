@@ -48,8 +48,9 @@ curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","a
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStarStarStarStarStarStarStarStarStarStarStarStar","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
 
 # Success
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
+curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' localhost:8080/person
+curl 'localhost:8080/person?first_name=ryan&last_name=smith'
 ```
 
 **WIP**

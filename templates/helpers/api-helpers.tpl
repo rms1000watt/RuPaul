@@ -1,13 +1,20 @@
 
 import (
 	"crypto/rand"
+	"encoding/json"
+	"errors"
+	"fmt"
+	"net/http"
 	"reflect"
 	"strings"
+
+	"github.com/spf13/cast"
 )
 
 const (
 	TagNameValidate             = "validate"
 	TagNameTransform            = "transform"
+	TagNameJSON                 = "json"
 	TransformStrEncrypt         = "encrypt"
 	TransformStrDecrypt         = "decrypt"
 	TransformStrHash            = "hash"
@@ -37,22 +44,26 @@ const (
 var (
 	dummyString   string
 	dummyInt      int
+	dummyInt64    int64
 	dummyFloat32  float32
 	dummyFloat64  float64
 	dummyBool     bool
 	dummyStringP  *string
 	dummyIntP     *int
+	dummyInt64P   *int64
 	dummyFloat32P *float32
 	dummyFloat64P *float64
 	dummyBoolP    *bool
 
 	TypeOfString   = reflect.TypeOf(dummyString)
 	TypeOfInt      = reflect.TypeOf(dummyInt)
+	TypeOfInt64    = reflect.TypeOf(dummyInt64)
 	TypeOfFloat32  = reflect.TypeOf(dummyFloat32)
 	TypeOfFloat64  = reflect.TypeOf(dummyFloat64)
 	TypeOfBool     = reflect.TypeOf(dummyBool)
 	TypeOfStringP  = reflect.TypeOf(dummyStringP)
 	TypeOfIntP     = reflect.TypeOf(dummyIntP)
+	TypeOfInt64P   = reflect.TypeOf(dummyInt64P)
 	TypeOfFloat32P = reflect.TypeOf(dummyFloat32P)
 	TypeOfFloat64P = reflect.TypeOf(dummyFloat64P)
 	TypeOfBoolP    = reflect.TypeOf(dummyBoolP)
@@ -60,6 +71,62 @@ var (
 
 func ErrorJSON(msg string) (out string) {
 	return `{"error":"` + msg + `"}`
+}
+
+func Unmarshal(r *http.Request, dst interface{}) (err error) {
+	if r.Method == http.MethodGet {
+		t := reflect.TypeOf(dst).Elem()
+		v := reflect.ValueOf(dst).Elem()
+
+		for i := 0; i < t.NumField(); i++ {
+			jsonTag := t.Field(i).Tag.Get(TagNameJSON)
+			jsonParams := strings.Split(jsonTag, ",")
+			if len(jsonParams) == 0 {
+				continue
+			}
+			jsonName := jsonParams[0]
+
+			validateTag := t.Field(i).Tag.Get(TagNameValidate)
+			validateParams := strings.Split(validateTag, ",")
+			required := false
+			for _, param := range validateParams {
+				if param == ValidateStrRequired {
+					required = true
+				}
+			}
+
+			if err := r.ParseForm(); err != nil {
+				return err
+			}
+
+			formValue := r.Form.Get(jsonName)
+			if formValue == "" && required {
+				return errors.New("Empty required field")
+			}
+
+			v.Field(i).Set(reflect.New(v.Field(i).Type().Elem()))
+
+			switch v.Field(i).Type() {
+			case TypeOfStringP:
+				v.Field(i).Elem().SetString(formValue)
+			case TypeOfIntP:
+				fallthrough
+			case TypeOfInt64P:
+				v.Field(i).Elem().SetInt(cast.ToInt64(formValue))
+			case TypeOfFloat32P:
+				fmt.Println("Float32 not supported")
+			case TypeOfFloat64P:
+				v.Field(i).Elem().SetFloat(cast.ToFloat64(formValue))
+			}
+		}
+		return
+	}
+
+	if err := json.NewDecoder(r.Body).Decode(dst); err != nil {
+		return err
+	}
+
+	return
 }
 
 func getRandomSalt() (salt []byte, err error) {
