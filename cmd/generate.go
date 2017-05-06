@@ -20,6 +20,12 @@ var (
 	}
 )
 
+func init() {
+	RootCmd.AddCommand(generateCmd)
+
+	generateCmd.Flags().StringVarP(&configFilePath, "config-file", "f", "./rupaul.yml", "Config File Path of the RuPaul YAML")
+}
+
 func runGenerate(cmd *cobra.Command, args []string) {
 	genCfg := generate.Config{}
 
@@ -35,10 +41,4 @@ func runGenerate(cmd *cobra.Command, args []string) {
 	}
 
 	generate.Generate(genCfg)
-}
-
-func init() {
-	RootCmd.AddCommand(generateCmd)
-
-	generateCmd.Flags().StringVarP(&configFilePath, "config-file", "f", "./rupaul.yml", "Config File Path of the RuPaul YAML")
 }
