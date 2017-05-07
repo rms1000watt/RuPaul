@@ -60,15 +60,27 @@ Connectors:
     URL: http://localhost:8181/
     Password: postgres
 
+Headers:
+  NoCache:
+    - Key: "Cache-Control"
+      Value: "no-cache, no-store, max-age=0, must-revalidate"
+    - Key: "Pragma"
+      Value: "no-cache"
+    - Key: "Expires"
+      Value: "0"
+  
 APIs:
   Rest1:
     Name: rest1
     Type: REST
     Serialization: JSON
+    CertsPath: ./certs
+    PrivKeyFileName: server.key
+    PubKeyFileName: server.cer
     Middlewares: 
-      - Logging
-      - Authentication
-      - CSRF
+      - CORS
+    Headers:
+      - NoCache
     Paths:
       - Name: person
         Pattern: /person

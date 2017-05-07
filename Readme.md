@@ -36,10 +36,10 @@ go run main.go generate -f examples/rupaul.yml
 Testing Purposes
 
 ```sh
-clear && rm -rf out && go run main.go generate -f examples/rupaul.yml
-PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rupaul-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH && cp -r out/* $PROJECT_PATH'
+clear; rm -rf out; go run main.go generate -f examples/rupaul.yml
+PROJECT_PATH=$(go env GOPATH)/src/github.com/rms1000watt/rupaul-test bash -c 'rm -rf $PROJECT_PATH && mkdir $PROJECT_PATH  && mkdir $PROJECT_PATH/certs && cp -r out/* $PROJECT_PATH && cp -r certs/* $PROJECT_PATH/certs'
 
-cd ../rupaul-test && go run main.go serve
+cd ../rupaul-test; clear; go run main.go serve
 
 # Fails
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/person

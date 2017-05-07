@@ -37,11 +37,14 @@ type Data struct {
 }
 
 type API struct {
-	Name          string   `yaml:"Name"`
-	Type          string   `yaml:"Type"`
-	Serialization string   `yaml:"Serialization"`
-	Middlewares   []string `yaml:"Midlewares"`
-	Paths         []Path   `yaml:"Paths"`
+	Name            string   `yaml:"Name"`
+	Type            string   `yaml:"Type"`
+	CertsPath       string   `yaml:"CertsPath"`
+	PubKeyFileName  string   `yaml:"PubKeyFileName"`
+	PrivKeyFileName string   `yaml:"PrivKeyFileName"`
+	Serialization   string   `yaml:"Serialization"`
+	Middlewares     []string `yaml:"Midlewares"`
+	Paths           []Path   `yaml:"Paths"`
 }
 
 type Path struct {
@@ -99,11 +102,14 @@ type TemplateCommandLine struct {
 }
 
 type TemplateAPI struct {
-	Name          string
-	Type          string
-	Serialization string
-	Middlewares   []string
-	Paths         []TemplatePath
+	Name            string
+	Type            string
+	CertsPath       string
+	PubKeyFileName  string
+	PrivKeyFileName string
+	Serialization   string
+	Middlewares     []string
+	Paths           []TemplatePath
 }
 
 type TemplatePath struct {

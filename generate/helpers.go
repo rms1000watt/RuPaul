@@ -90,11 +90,14 @@ func yamlToTemplateAPI(yamlAPI API, cfg Config) (templateAPI TemplateAPI) {
 	}
 
 	templateAPI = TemplateAPI{
-		Name:          yamlAPI.Name,
-		Type:          yamlAPI.Type,
-		Serialization: yamlAPI.Serialization,
-		Middlewares:   yamlAPI.Middlewares,
-		Paths:         templatePaths,
+		Name:            yamlAPI.Name,
+		Type:            yamlAPI.Type,
+		CertsPath:       yamlAPI.CertsPath,
+		PubKeyFileName:  yamlAPI.PubKeyFileName,
+		PrivKeyFileName: yamlAPI.PrivKeyFileName,
+		Serialization:   yamlAPI.Serialization,
+		Middlewares:     yamlAPI.Middlewares,
+		Paths:           templatePaths,
 	}
 	return
 }
@@ -354,4 +357,43 @@ func GetHTTPMethod(method string) (httpMethod string) {
 
 	fmt.Println("BAD METHOD PROVIDED!!", method)
 	return
+}
+
+func CopyCertsPath(cfg Config) (certsPath string) {
+	certsPaths := []string{}
+	for _, api := range cfg.APIs {
+		certsPaths = append(certsPaths, api.CertsPath)
+	}
+
+	if len(certsPaths) > 1 {
+		prevCertsPath := certsPaths[0]
+		for _, cp := range certsPaths {
+			if prevCertsPath != cp {
+				fmt.Println("Different Certs Path defined:", prevCertsPath, cp)
+				return ""
+			}
+			prevCertsPath = cp
+		}
+		return dockerCopyCertsPath(certsPaths[0])
+	}
+
+	if len(certsPaths) == 1 {
+		return dockerCopyCertsPath(certsPaths[0])
+	}
+
+	return ""
+}
+
+func dockerCopyCertsPath(certsPath string) string {
+	if certsPath != "" {
+		return "COPY " + certsPath + " /certs"
+	}
+	return ""
+}
+
+func FallbackSet(in, fallback string) string {
+	if in != "" {
+		return in
+	}
+	return fallback
 }

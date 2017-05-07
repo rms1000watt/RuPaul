@@ -152,6 +152,8 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		"OutputInInputs":   OutputInInputs,
 		"EmptyValue":       EmptyValue,
 		"GetHTTPMethod":    GetHTTPMethod,
+		"CopyCertsPath":    CopyCertsPath,
+		"FallbackSet":      FallbackSet,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)

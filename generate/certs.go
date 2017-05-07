@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func Certs(certsPath string, letsEncrypt bool) {
+func Certs(certsPath, commonName string, letsEncrypt bool) {
 	fmt.Println("Generating certs...")
 
 	if err := os.Chdir(certsPath); err != nil {
@@ -30,9 +30,9 @@ func Certs(certsPath string, letsEncrypt bool) {
 	// # Courtesy of https://github.com/deckarep/EasyCert
 	cmds := []string{
 		"openssl genrsa -out ca.key 2048",
-		`openssl req -x509 -new -key ca.key -out ca.cer -days 90 -subj /CN="rms1000watt-Certificate-Authority"`,
+		`openssl req -x509 -new -key ca.key -out ca.cer -days 90 -subj /CN="rms1000watt-CA"`,
 		"openssl genrsa -out server.key 2048",
-		`openssl req -new -key server.key -out server.csr -config ./openssl.cnf -subj /CN="localhost"`,
+		`openssl req -new -key server.key -out server.csr -config ./openssl.cnf -subj /CN="` + commonName + `"`,
 		"openssl x509 -req -in server.csr -out server.cer -CAkey ca.key -CA ca.cer -days 90 -CAcreateserial -CAserial serial",
 	}
 
