@@ -2,13 +2,14 @@ package generate
 
 // Yaml Config
 type Config struct {
-	Version         string          `yaml:"Version"`
-	MainImportPath  string          `yaml:"MainImportPath"`
-	DockerPath      string          `yaml:"DockerPath"`
-	CopyrightHolder string          `yaml:"CopyrightHolder"`
-	Datas           map[string]Data `yaml:"Data"`
-	APIs            map[string]API  `yaml:"APIs"`
-	CommandLine     CommandLine     `yaml:"CommandLine"`
+	Version         string                `yaml:"Version"`
+	MainImportPath  string                `yaml:"MainImportPath"`
+	DockerPath      string                `yaml:"DockerPath"`
+	CopyrightHolder string                `yaml:"CopyrightHolder"`
+	Datas           map[string]Data       `yaml:"Data"`
+	APIs            map[string]API        `yaml:"APIs"`
+	CommandLine     CommandLine           `yaml:"CommandLine"`
+	Middlewares     map[string]Middleware `yaml:"Middlewares"`
 	// Connectors      map[string]Connector `yaml:"Connector"`
 }
 
@@ -43,7 +44,7 @@ type API struct {
 	PubKeyFileName  string   `yaml:"PubKeyFileName"`
 	PrivKeyFileName string   `yaml:"PrivKeyFileName"`
 	Serialization   string   `yaml:"Serialization"`
-	Middlewares     []string `yaml:"Midlewares"`
+	Middlewares     []string `yaml:"Middlewares"`
 	Paths           []Path   `yaml:"Paths"`
 }
 
@@ -84,6 +85,15 @@ type Command struct {
 	API              string         `yaml:"API"`
 }
 
+type Middleware struct {
+	Options []KV `yaml:"Options"`
+}
+
+type KV struct {
+	Key   string `yaml:"Key"`
+	Value string `yaml:"Value"`
+}
+
 // Template/Generator Config
 type TemplateConfig struct {
 	Version         string
@@ -91,6 +101,7 @@ type TemplateConfig struct {
 	CopyrightHolder string
 	API             TemplateAPI
 	CommandLine     TemplateCommandLine
+	Middlewares     map[string]TemplateMiddleware
 }
 
 type TemplateCommandLine struct {
@@ -108,7 +119,7 @@ type TemplateAPI struct {
 	PubKeyFileName  string
 	PrivKeyFileName string
 	Serialization   string
-	Middlewares     []string
+	Middlewares     map[string]TemplateMiddleware
 	Paths           []TemplatePath
 }
 
@@ -120,8 +131,12 @@ type TemplatePath struct {
 
 type TemplateMethod struct {
 	Name        string
-	Middlewares []string
+	Middlewares map[string]TemplateMiddleware
 	Inputs      []Data
 	Connector   string
 	Outputs     []Data
+}
+
+type TemplateMiddleware struct {
+	Options []KV
 }

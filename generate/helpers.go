@@ -41,6 +41,7 @@ func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 		MainImportPath:  cfg.MainImportPath,
 		CopyrightHolder: cfg.CopyrightHolder,
 		API:             templateAPI,
+		// Middlewares:     map[string]TemplateMiddleware{},
 		CommandLine: TemplateCommandLine{
 			AppName:             cfg.CommandLine.AppName,
 			AppLongDescription:  cfg.CommandLine.AppLongDescription,
@@ -74,7 +75,7 @@ func yamlToTemplateAPI(yamlAPI API, cfg Config) (templateAPI TemplateAPI) {
 				Name:        strings.ToLower(methodKey),
 				Inputs:      inputs,
 				Outputs:     outputs,
-				Middlewares: methodValue.Middlewares,
+				Middlewares: yamlToTemplateMiddlewares(methodValue.Middlewares, cfg),
 				Connector:   methodValue.Connector,
 			})
 		}
@@ -96,8 +97,28 @@ func yamlToTemplateAPI(yamlAPI API, cfg Config) (templateAPI TemplateAPI) {
 		PubKeyFileName:  yamlAPI.PubKeyFileName,
 		PrivKeyFileName: yamlAPI.PrivKeyFileName,
 		Serialization:   yamlAPI.Serialization,
-		Middlewares:     yamlAPI.Middlewares,
+		Middlewares:     yamlToTemplateMiddlewares(yamlAPI.Middlewares, cfg),
 		Paths:           templatePaths,
+	}
+	return
+}
+
+func yamlToTemplateMiddlewares(middlewares []string, cfg Config) (templateMiddlewares map[string]TemplateMiddleware) {
+	templateMiddlewares = map[string]TemplateMiddleware{}
+
+	for _, mw := range middlewares {
+		templateMiddlewares[mw] = TemplateMiddleware{
+			Options: getMiddlewareOptions(mw, cfg),
+		}
+	}
+	return
+}
+
+func getMiddlewareOptions(mw string, cfg Config) (options []KV) {
+	//TODO: There will probably be some optional options where defaults will be filled in here
+
+	if len(cfg.Middlewares[mw].Options) != 0 {
+		return cfg.Middlewares[mw].Options
 	}
 	return
 }

@@ -60,14 +60,11 @@ Connectors:
     URL: http://localhost:8181/
     Password: postgres
 
-Headers:
-  NoCache:
-    - Key: "Cache-Control"
-      Value: "no-cache, no-store, max-age=0, must-revalidate"
-    - Key: "Pragma"
-      Value: "no-cache"
-    - Key: "Expires"
-      Value: "0"
+Middlewares:
+  CORS: 
+    Options: 
+    - Key: Hosts
+      Value: '"localhost", "127.0.0.1", "www.example.com"' # TODO: Handle this better less foolishly
   
 APIs:
   Rest1:
@@ -78,9 +75,8 @@ APIs:
     PrivKeyFileName: server.key
     PubKeyFileName: server.cer
     Middlewares: 
-      - CORS
-    Headers:
-      - NoCache
+    - CORS
+    - NoCache
     Paths:
       - Name: person
         Pattern: /person
@@ -99,7 +95,7 @@ APIs:
             - Age
           Post:
             Middlewares:
-            - CSRF
+            - Logging
             Inputs:
             - FirstName
             - MiddleName

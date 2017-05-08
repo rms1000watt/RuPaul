@@ -12,6 +12,8 @@ func ServerHandler() http.Handler {
 func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Starting {{$path.Name | Title}}Handler...")
 
+
+	// TODO: Add `HandleMiddlewares()()` to handlerFuncs below
 	switch r.Method {
 	{{range $method := $path.Methods}}case http.{{GetHTTPMethod $method.Name}}:
 		{{$path.Name | Title}}Handler{{$method.Name | ToUpper}}(w, r)
