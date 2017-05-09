@@ -16,9 +16,9 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Add `HandleMiddlewares()()` to handlerFuncs below
 	switch r.Method {
 	{{range $method := $path.Methods}}case http.{{GetHTTPMethod $method.Name}}:
-		{{$path.Name | Title}}Handler{{$method.Name | ToUpper}}(w, r)
+		HandleMiddlewares({{$path.Name | Title}}Handler{{$method.Name | ToUpper}})(w, r)
 	{{end}}case http.MethodOptions:
-		{{$path.Name | Title}}HandlerOPTIONS(w, r)
+		HandleMiddlewares({{$path.Name | Title}}HandlerOPTIONS)(w, r)
 	default:
 		fmt.Println("Method not allowed:", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
