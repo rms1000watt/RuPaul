@@ -145,20 +145,22 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	}
 
 	funcMap := template.FuncMap{
-		"ToLower":          strings.ToLower,
-		"Title":            strings.Title,
-		"ToUpper":          strings.ToUpper,
-		"TimeNowYear":      time.Now().Year,
-		"GenValidationStr": GenValidationStr,
-		"GenTransformStr":  GenTransformStr,
-		"HandleQuotes":     HandleQuotes,
-		"ToSnakeCase":      ToSnakeCase,
-		"ToCamelCase":      ToCamelCase,
-		"OutputInInputs":   OutputInInputs,
-		"EmptyValue":       EmptyValue,
-		"GetHTTPMethod":    GetHTTPMethod,
-		"CopyCertsPath":    CopyCertsPath,
-		"FallbackSet":      FallbackSet,
+		"ToLower":              strings.ToLower,
+		"Title":                strings.Title,
+		"ToUpper":              strings.ToUpper,
+		"TimeNowYear":          time.Now().Year,
+		"GenValidationStr":     GenValidationStr,
+		"GenTransformStr":      GenTransformStr,
+		"HandleQuotes":         HandleQuotes,
+		"ToSnakeCase":          ToSnakeCase,
+		"ToCamelCase":          ToCamelCase,
+		"OutputInInputs":       OutputInInputs,
+		"EmptyValue":           EmptyValue,
+		"GetHTTPMethod":        GetHTTPMethod,
+		"CopyCertsPath":        CopyCertsPath,
+		"FallbackSet":          FallbackSet,
+		"GetMethodMiddlewares": GetMethodMiddlewares,
+		"GetPathMiddlewares":   GetPathMiddlewares,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)

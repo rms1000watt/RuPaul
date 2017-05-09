@@ -44,13 +44,14 @@ cd ../rupaul-test; clear; go run main.go serve
 # Fails
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star"}' localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33}' localhost:8080/person
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123}' localhost:8080/person
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStarStarStarStarStarStarStarStarStarStarStarStar","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123}' https://localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStarStarStarStarStarStarStarStarStarStarStarStar","age":33,"account":123.123,"password":"pASSword"}' https://localhost:8080/person
 
 # Success
-curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' localhost:8080/person
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' localhost:8080/person
-curl 'localhost:8080/person?first_name=ryan&last_name=smith'
+curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' --insecure https://localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' --insecure https://localhost:8080/person
+curl --insecure 'https://localhost:8080/person?first_name=ryan&last_name=smith&age=88'
+https://localhost:8080/person?first_name=ryan&last_name=smith&age=88
 ```
 
 **WIP**

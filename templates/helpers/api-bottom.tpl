@@ -2,7 +2,7 @@
 func ServerHandler() http.Handler {
 	mux := http.NewServeMux()
 
-	{{range $path := .API.Paths}}mux.HandleFunc("{{$path.Pattern}}", {{$path.Name | Title}}Handler)
+	{{range $path := .API.Paths}}mux.HandleFunc("{{$path.Pattern}}", HandleMiddlewares({{$path.Name | Title}}Handler{{GetPathMiddlewares $}}))
 	{{end}}
 
 	return mux
@@ -16,9 +16,9 @@ func {{$path.Name | Title}}Handler(w http.ResponseWriter, r *http.Request) {
 	// TODO: Add `HandleMiddlewares()()` to handlerFuncs below
 	switch r.Method {
 	{{range $method := $path.Methods}}case http.{{GetHTTPMethod $method.Name}}:
-		HandleMiddlewares({{$path.Name | Title}}Handler{{$method.Name | ToUpper}})(w, r)
+		HandleMiddlewares({{$path.Name | Title}}Handler{{$method.Name | ToUpper}}{{GetMethodMiddlewares $method.Name $}})(w, r)
 	{{end}}case http.MethodOptions:
-		HandleMiddlewares({{$path.Name | Title}}HandlerOPTIONS)(w, r)
+		HandleMiddlewares({{$path.Name | Title}}HandlerOPTIONS{{GetMethodMiddlewares "options" $}})(w, r)
 	default:
 		fmt.Println("Method not allowed:", r.Method)
 		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)

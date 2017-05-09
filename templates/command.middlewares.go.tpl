@@ -12,5 +12,6 @@ func HandleMiddlewares(handlerFunc http.HandlerFunc, middlewares ...func(http.Ha
 }
 {{end}}
 
-{{if .API.Middlewares.NoCache}}{{template "middleware-no-cache.tpl" .}}{{end}}
-{{if .API.Middlewares.CORS}}{{template "middleware-cors-func.tpl" .}}{{end}}
+{{if .API.Middlewares}}{{template "middleware-no-cache.tpl" .}}{{end}}
+{{if .API.Middlewares}}{{template "middleware-cors-func.tpl" .}}{{end}}
+{{if .API.Middlewares}}{{template "middleware-logging.tpl" .}}{{end}}

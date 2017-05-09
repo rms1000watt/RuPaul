@@ -61,7 +61,7 @@ Connectors:
     Password: postgres
 
 Middlewares:
-  CORS: 
+  CORS: # TODO: Base this on middleware type and let 'CORS' just be a pk
     Options: 
     - Key: Hosts
       Value: '"localhost", "127.0.0.1", "www.example.com"' # TODO: Handle this better less foolishly

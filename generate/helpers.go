@@ -418,3 +418,37 @@ func FallbackSet(in, fallback string) string {
 	}
 	return fallback
 }
+
+func GetMethodMiddlewares(in string, cfg TemplateConfig) (out string) {
+	mws := []string{}
+	for _, path := range cfg.API.Paths {
+		for _, method := range path.Methods {
+			if method.Name == in {
+				for k := range method.Middlewares {
+					mws = append(mws, k)
+				}
+				break
+			}
+		}
+	}
+
+	out = ""
+	for _, mw := range mws {
+		out += ", Middleware" + mw
+	}
+
+	return
+}
+
+func GetPathMiddlewares(cfg TemplateConfig) (out string) {
+	mws := []string{}
+	for k := range cfg.API.Middlewares {
+		mws = append(mws, k)
+	}
+
+	out = ""
+	for _, mw := range mws {
+		out += ", Middleware" + mw
+	}
+	return
+}

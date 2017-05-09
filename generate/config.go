@@ -101,7 +101,6 @@ type TemplateConfig struct {
 	CopyrightHolder string
 	API             TemplateAPI
 	CommandLine     TemplateCommandLine
-	Middlewares     map[string]TemplateMiddleware
 }
 
 type TemplateCommandLine struct {
