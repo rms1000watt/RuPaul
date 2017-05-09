@@ -10,8 +10,8 @@ func HandleMiddlewares(handlerFunc http.HandlerFunc, middlewares ...func(http.Ha
 	}
 	return handlerFunc
 }
-{{end}}
 
-{{if .API.Middlewares}}{{template "middleware-no-cache.tpl" .}}{{end}}
-{{if .API.Middlewares}}{{template "middleware-cors-func.tpl" .}}{{end}}
-{{if .API.Middlewares}}{{template "middleware-logging.tpl" .}}{{end}}
+{{template "middleware-no-cache.tpl" .}}
+{{template "middleware-cors-func.tpl" .}}
+{{template "middleware-logging.tpl" .}}
+{{end}}
