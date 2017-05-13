@@ -1,0 +1,41 @@
+APIs:
+  FromFile: ./examples/api.yml
+  Rest1:
+    Name: rest1
+    Type: REST
+    Serialization: JSON
+    CertsPath: ./certs
+    PrivKeyFileName: server.key
+    PubKeyFileName: server.cer
+    Middlewares: 
+    - CORS
+    - NoCache
+    Paths:
+      - Name: person
+        Pattern: /person
+        Methods:
+          Get:
+            Middlewares:
+            - Logging
+            Inputs:
+            - FirstName
+            - LastName
+            - Age
+            Connector: postgres1
+            Outputs:
+            - FirstName
+            - LastName
+            - Age
+          Post:
+            Middlewares:
+            - Logging
+            Inputs:
+            - FirstName
+            - MiddleName
+            - LastName
+            - Age
+            Connector: postgres1
+            Outputs:
+            - FirstName
+            - LastName
+            - Age

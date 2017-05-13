@@ -50,12 +50,29 @@ func Generate(cfg Config) {
 		return
 	}
 
+	cfgs, err := importCfgs(cfg)
+	if err != nil {
+		fmt.Println("Failed importing other configs:", err)
+		return
+	}
+
+	cfg = mergeConfigs(cfg, cfgs)
+
 	templates := getTemplates(cfg)
 	for _, tpl := range templates {
 		if err := genFile(tpl, helperFileNames); err != nil {
 			fmt.Println("Failed generating template:", tpl.TemplateName, ":", err)
 		}
 	}
+}
+
+func importCfgs(cfg Config) (cfgs []Config, err error) {
+	// cfg.Imports.
+	return
+}
+
+func mergeConfigs(cfg Config, cfgs []Config) Config {
+	return cfg
 }
 
 func getHelperFileNames() (helperFileNames []string, err error) {

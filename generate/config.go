@@ -10,7 +10,12 @@ type Config struct {
 	APIs            map[string]API        `yaml:"APIs"`
 	CommandLine     CommandLine           `yaml:"CommandLine"`
 	Middlewares     map[string]Middleware `yaml:"Middlewares"`
+	Imports         Imports               `yaml:"Imports"`
 	// Connectors      map[string]Connector `yaml:"Connector"`
+}
+
+type Imports struct {
+	APIs []string `yaml:"APIs"`
 }
 
 type Data struct {
