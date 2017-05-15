@@ -11,6 +11,9 @@ import (
 	"strings"
 	"text/template"
 	"time"
+
+	"github.com/imdario/mergo"
+	yaml "gopkg.in/yaml.v2"
 )
 
 const (
@@ -56,7 +59,11 @@ func Generate(cfg Config) {
 		return
 	}
 
-	cfg = mergeConfigs(cfg, cfgs)
+	cfg, err = mergeConfigs(cfg, cfgs)
+	if err != nil {
+		fmt.Println("Failed merging configs:", err)
+		return
+	}
 
 	templates := getTemplates(cfg)
 	for _, tpl := range templates {
@@ -64,15 +71,6 @@ func Generate(cfg Config) {
 			fmt.Println("Failed generating template:", tpl.TemplateName, ":", err)
 		}
 	}
-}
-
-func importCfgs(cfg Config) (cfgs []Config, err error) {
-	// cfg.Imports.
-	return
-}
-
-func mergeConfigs(cfg Config, cfgs []Config) Config {
-	return cfg
 }
 
 func getHelperFileNames() (helperFileNames []string, err error) {
@@ -85,6 +83,36 @@ func getHelperFileNames() (helperFileNames []string, err error) {
 		helperFileNames = append(helperFileNames, filepath.Join(dirHelpers, helperFile.Name()))
 	}
 	return
+}
+
+func importCfgs(cfg Config) (cfgs []Config, err error) {
+	cfgs = []Config{}
+	for _, filePath := range cfg.Imports {
+		newCfg := &Config{}
+
+		fileBytes, err := ioutil.ReadFile(filePath)
+		if err != nil {
+			fmt.Println("Failed reading newCfg:", filePath)
+			return nil, err
+		}
+
+		if err := yaml.Unmarshal(fileBytes, newCfg); err != nil {
+			fmt.Println("Failed unmarshalling newCfg Yaml:", err)
+			return nil, err
+		}
+
+		cfgs = append(cfgs, *newCfg)
+	}
+	return
+}
+
+func mergeConfigs(cfg Config, cfgs []Config) (Config, error) {
+	for _, c := range cfgs {
+		if err := mergo.Merge(&cfg, c); err != nil {
+			return cfg, err
+		}
+	}
+	return cfg, nil
 }
 
 func getTemplates(cfg Config) (templates []Template) {

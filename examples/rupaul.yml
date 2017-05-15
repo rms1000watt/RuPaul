@@ -3,55 +3,14 @@ CopyrightHolder: Ryan Smith
 DockerPath: docker.io/rms1000watt/rupaul-test
 MainImportPath: github.com/rms1000watt/rupaul-test
 
+Imports:
+  - ./examples/api.yml
+  - ./examples/data.yml
+
 Data:
-  FirstName:
-    DisplayName: first_name
-    Type: string
-    Default:
-    Required: true
-    Encrypted: false
-    Hash: false
-    MaxLength: 100
-    MinLength: 0
-    MustHaveChars:
-    CantHaveChars:
-    OnlyHaveChars:
-    GreaterThan:
-    LessThan:
-    TrimChars:
-    Truncate: 20
   MiddleName:
-    Type: string
-    MaxLength: 100
-  LastName:
-    Type: string
-    Required: true
-    Hash: true
-    MaxLength: 100
-  Title:
-    Type: string
-    Default: Mrs.
-  Age:
-    DisplayName: age
-    Type: int
-    Required: true
-    GreaterThan: 0
-  Account:
-    Type: float64
-    Required: true
-  Password:
-    Type: string
-    Required: true
-    PasswordHash: true
-  Gossip:
-    Type: string
-    Encrypt: true
-    Decrypt: true
-  Ticket:
-    Type: string
-  ErrorCode:
-    Type: int
-    Default: -1
+    DisplayName: middle_name
+    Truncate: 50
 
 Connectors:
   Postgres1:
@@ -59,58 +18,7 @@ Connectors:
     Type: Postgres
     URL: http://localhost:8181/
     Password: postgres
-
-Middlewares:
-  CORS: # TODO: Base this on middleware type and let 'CORS' just be a pk
-    Options: 
-    - Key: Hosts
-      Value: '"localhost", "127.0.0.1", "www.example.com"' # TODO: Handle this better less foolishly
   
-Imports:
-  APIs:
-  - ./examples/api.yml
-
-# APIs:
-#   Rest1:
-#     Name: rest1
-#     Type: REST
-#     Serialization: JSON
-#     CertsPath: ./certs
-#     PrivKeyFileName: server.key
-#     PubKeyFileName: server.cer
-#     Middlewares: 
-#     - CORS
-#     - NoCache
-#     Paths:
-#       - Name: person
-#         Pattern: /person
-#         Methods:
-#           Get:
-#             Middlewares:
-#             - Logging
-#             Inputs:
-#             - FirstName
-#             - LastName
-#             - Age
-#             Connector: postgres1
-#             Outputs:
-#             - FirstName
-#             - LastName
-#             - Age
-#           Post:
-#             Middlewares:
-#             - Logging
-#             Inputs:
-#             - FirstName
-#             - MiddleName
-#             - LastName
-#             - Age
-#             Connector: postgres1
-#             Outputs:
-#             - FirstName
-#             - LastName
-#             - Age
-
 CommandLine:
   AppName: "RuPaulTest"
   AppShortDescription: First RuPaul Test app

@@ -259,6 +259,10 @@ func OutputInInputs(outputName string, inputs []Data) bool {
 }
 
 func EmptyValue(dataType string) (out string) {
+	if dataType[:2] == "[]" {
+		return dataType + "{}"
+	}
+
 	switch dataType {
 	case "string":
 		return "\"\""

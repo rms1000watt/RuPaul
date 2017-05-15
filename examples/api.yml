@@ -1,5 +1,10 @@
+Middlewares:
+  CORS: # TODO: Base this on middleware type and let 'CORS' just be a pk
+    Options: 
+    - Key: Hosts
+      Value: '"localhost", "127.0.0.1", "www.example.com"' # TODO: Handle this better/less foolishly
+
 APIs:
-  FromFile: ./examples/api.yml
   Rest1:
     Name: rest1
     Type: REST
@@ -34,8 +39,11 @@ APIs:
             - MiddleName
             - LastName
             - Age
+            - GroceryList
             Connector: postgres1
             Outputs:
             - FirstName
             - LastName
             - Age
+            - GroceryList
+            

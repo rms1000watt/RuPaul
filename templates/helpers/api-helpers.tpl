@@ -78,6 +78,10 @@ func Unmarshal(r *http.Request, dst interface{}) (err error) {
 		t := reflect.TypeOf(dst).Elem()
 		v := reflect.ValueOf(dst).Elem()
 
+		if err := r.ParseForm(); err != nil {
+			return err
+		}
+
 		for i := 0; i < t.NumField(); i++ {
 			jsonTag := t.Field(i).Tag.Get(TagNameJSON)
 			jsonParams := strings.Split(jsonTag, ",")
@@ -95,10 +99,6 @@ func Unmarshal(r *http.Request, dst interface{}) (err error) {
 				}
 			}
 
-			if err := r.ParseForm(); err != nil {
-				return err
-			}
-
 			formValue := r.Form.Get(jsonName)
 			if formValue == "" && required {
 				return errors.New("Empty required field")
@@ -113,10 +113,13 @@ func Unmarshal(r *http.Request, dst interface{}) (err error) {
 				fallthrough
 			case TypeOfInt64P:
 				v.Field(i).Elem().SetInt(cast.ToInt64(formValue))
-			case TypeOfFloat32P:
-				fmt.Println("Float32 not supported")
 			case TypeOfFloat64P:
 				v.Field(i).Elem().SetFloat(cast.ToFloat64(formValue))
+			case TypeOfFloat32P:
+				fmt.Println("Float32 not supported")
+				fallthrough
+			default:
+				fmt.Println("Field not set:", v.Type().Field(i).Name)
 			}
 		}
 		return
