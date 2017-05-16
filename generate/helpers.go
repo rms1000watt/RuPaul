@@ -30,6 +30,14 @@ const (
 	ValidateStrMustHaveChars = "mustHaveChars"
 	ValidateStrCantHaveChars = "cantHaveChars"
 	ValidateStrOnlyHaveChars = "onlyHaveChars"
+	DataTypeFloat32          = "float32"
+	DataTypeFloat64          = "float64"
+	DataTypeInt              = "int"
+	DataTypeInt32            = "int32"
+	DataTypeInt64            = "int64"
+	DataTypeString           = "string"
+	DataTypeBool             = "bool"
+	DataTypeStringArr        = "[]string"
 )
 
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
@@ -264,15 +272,19 @@ func EmptyValue(dataType string) (out string) {
 	}
 
 	switch dataType {
-	case "string":
+	case DataTypeString:
 		return "\"\""
-	case "int":
+	case DataTypeInt:
+		fallthrough
+	case DataTypeInt32:
+		fallthrough
+	case DataTypeInt64:
 		return "0"
-	case "float32":
+	case DataTypeFloat32:
+		fallthrough
+	case DataTypeFloat64:
 		return "0.0"
-	case "float64":
-		return "0.0"
-	case "bool":
+	case DataTypeBool:
 		return "false"
 	}
 	fmt.Println("DATA TYPE NOT DEFINED:", dataType)
@@ -455,4 +467,23 @@ func GetPathMiddlewares(cfg TemplateConfig) (out string) {
 		out += ", Middleware" + mw
 	}
 	return
+}
+
+func GetInputType(inputType string) (out string) {
+	if len(inputType) < 2 {
+		return inputType
+	}
+	if inputType[:2] != "[]" {
+		return "*" + inputType
+	}
+	return "[]*" + inputType[2:]
+}
+
+func GetDereferenceFunc(outputType string) (out string) {
+	switch outputType {
+	case DataTypeStringArr:
+		return "dereferenceStringArray"
+	}
+
+	return "*"
 }

@@ -163,3 +163,12 @@ func onlyCharsInStr(onlyChars, in string) (out bool) {
 	}
 	return len(in) == 0
 }
+
+func dereferenceStringArray(in []*string) (out []string) {
+	out = []string{}
+
+	for _, strP := range in {
+		out = append(out, *strP)
+	}
+	return out
+}

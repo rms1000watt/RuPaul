@@ -206,6 +206,8 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		"FallbackSet":          FallbackSet,
 		"GetMethodMiddlewares": GetMethodMiddlewares,
 		"GetPathMiddlewares":   GetPathMiddlewares,
+		"GetInputType":         GetInputType,
+		"GetDereferenceFunc":   GetDereferenceFunc,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)

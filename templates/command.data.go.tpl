@@ -3,7 +3,7 @@ package {{.CommandLine.Command.Name}}
 {{range $path := .API.Paths}}
 {{range $method := $path.Methods}}
 type {{$path.Name | Title}}Input{{$method.Name | ToUpper}} struct {
-    {{range $input := $method.Inputs}}{{$input.Name}} *{{$input.Type}} `json:"{{$input.DisplayName}},omitempty" validate:"{{GenValidationStr $input}}" transform:"{{GenTransformStr $input}}"`
+    {{range $input := $method.Inputs}}{{$input.Name}} {{GetInputType $input.Type}} `json:"{{$input.DisplayName}},omitempty" validate:"{{GenValidationStr $input}}" transform:"{{GenTransformStr $input}}"`
     {{end}}
 }
 
@@ -23,7 +23,7 @@ func get{{$path.Name | Title}}Output{{$method.Name | ToUpper}}({{$path.Name | To
 	
 	{{range $output := $method.Outputs}}{{if OutputInInputs $output.Name $method.Inputs}}{{$output.Name | ToCamelCase}} := {{EmptyValue $output.Type}}
 	if {{$path.Name | ToLower}}Input{{$method.Name | ToUpper}}.{{$output.Name | Title}} != nil {
-		{{$output.Name | ToCamelCase}} = *{{$path.Name | ToLower}}Input{{$method.Name | ToUpper}}.{{$output.Name | Title}}
+		{{$output.Name | ToCamelCase}} = {{GetDereferenceFunc $output.Type}}({{$path.Name | ToLower}}Input{{$method.Name | ToUpper}}.{{$output.Name | Title}})
 	}{{end}}
 	
 	{{end}}

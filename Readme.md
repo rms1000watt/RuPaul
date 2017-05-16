@@ -50,7 +50,7 @@ curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStar
 # Success
 curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' --insecure https://localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' --insecure https://localhost:8080/person
-curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world","groceryList":["pigs","blanket"]}' --insecure https://localhost:8080/person
+curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world","grocery_list":["pigs","blanket"]}' --insecure https://localhost:8080/person
 curl --insecure 'https://localhost:8080/person?first_name=ryan&last_name=smith&age=88'
 https://localhost:8080/person?first_name=ryan&last_name=smith&age=88
 ```
