@@ -18,6 +18,12 @@ var RootCmd = &cobra.Command{
 	Long:  `{{.CommandLine.AppLongDescription}}`,
 }
 
+func init() {
+	{{template "global-args-bottom.tpl" .}}
+
+	SetPFlagsFromEnv(RootCmd)
+}
+
 // Execute adds all child commands to the root command sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
@@ -25,12 +31,6 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(-1)
 	}
-}
-
-func init() {
-	{{template "global-args-bottom.tpl" .}}
-
-	SetPFlagsFromEnv(RootCmd)
 }
 
 func SetPFlagsFromEnv(cmd *cobra.Command) {

@@ -17,6 +17,14 @@ var {{.Name}}Cmd = &cobra.Command{
 	Run: Run{{.Name | Title}},
 }
 
+func init() {
+	RootCmd.AddCommand({{.Name}}Cmd)
+
+	{{template "command-args-bottom.tpl" .}}
+
+	SetFlagsFromEnv({{.Name}}Cmd)
+}
+
 func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
 	// Get config arguments and pass it to the function itself
 	{{.Name}}Cfg := {{.Name}}.Config{
@@ -24,12 +32,4 @@ func Run{{.Name | Title}}(cmd *cobra.Command, args []string) {
 	}
 
 	{{.Name}}.{{.Name | Title}}({{.Name}}Cfg)
-}
-
-func init() {
-	RootCmd.AddCommand({{.Name}}Cmd)
-
-	{{template "command-args-bottom.tpl" .}}
-
-	SetFlagsFromEnv({{.Name}}Cmd)
 }

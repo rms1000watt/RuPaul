@@ -16,6 +16,22 @@ APIs:
     - CORS
     - NoCache
     Paths:
+      - Name: ticket
+        Pattern: /ticket
+        Methods:
+          Get:
+            Inputs:
+            - TicketID
+            Outputs:
+            - Seat
+            - ShowTime
+          Post:
+            Inputs:
+            - TicketID
+            - Seat
+            - ShowTime
+            Outputs:
+            - TicketID
       - Name: person
         Pattern: /person
         Methods:
@@ -40,10 +56,12 @@ APIs:
             - LastName
             - Age
             - GroceryList
+            - AgeList
             Connector: postgres1
             Outputs:
             - FirstName
             - LastName
             - Age
             - GroceryList
+            - AgeList
             

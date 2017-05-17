@@ -49,3 +49,11 @@ Data:
     Default: -1
   GroceryList:
     Type: "[]string"
+  AgeList:
+    Type: "[]int"
+  TicketID:
+    Type: string
+  Seat:
+    Type: string
+  ShowTime:
+    Type: string

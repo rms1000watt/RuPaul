@@ -135,6 +135,8 @@ func getTemplates(cfg Config) (templates []Template) {
 
 	for key, value := range cfg.CommandLine.Commands {
 		lowerKey := strings.ToLower(key)
+		templateCfg := yamlToTemplateCfg(cfg, key)
+
 		templates = append(templates, Template{
 			TemplateName: "cmd." + lowerKey + ".go.tpl",
 			FileName:     "cmd.command.go.tpl",
@@ -143,38 +145,54 @@ func getTemplates(cfg Config) (templates []Template) {
 		templates = append(templates, Template{
 			TemplateName: lowerKey + "." + lowerKey + ".go.tpl",
 			FileName:     "command.command.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".config.go.tpl",
 			FileName:     "command.config.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".middlewares.go.tpl",
 			FileName:     "command.middlewares.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".helpers.go.tpl",
 			FileName:     "command.helpers.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
+		})
+		templates = append(templates, Template{
+			TemplateName: lowerKey + ".unmarshal.go.tpl",
+			FileName:     "command.unmarshal.go.tpl",
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".validate.go.tpl",
 			FileName:     "command.validate.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".transform.go.tpl",
 			FileName:     "command.transform.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
 		templates = append(templates, Template{
 			TemplateName: lowerKey + ".data.go.tpl",
 			FileName:     "command.data.go.tpl",
-			Data:         yamlToTemplateCfg(cfg, key),
+			Data:         templateCfg,
 		})
+
+		for _, apiPath := range templateCfg.API.Paths {
+			ephemeralCfg := templateCfg
+			ephemeralCfg.API.Paths = []TemplatePath{apiPath}
+
+			templates = append(templates, Template{
+				TemplateName: fmt.Sprintf("%s.%sHandler.go.tpl", lowerKey, apiPath.Name),
+				FileName:     "command.handler.go.tpl",
+				Data:         ephemeralCfg,
+			})
+		}
 	}
 
 	return
@@ -208,6 +226,7 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 		"GetPathMiddlewares":   GetPathMiddlewares,
 		"GetInputType":         GetInputType,
 		"GetDereferenceFunc":   GetDereferenceFunc,
+		"GetProjectFolder":     GetProjectFolder,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)

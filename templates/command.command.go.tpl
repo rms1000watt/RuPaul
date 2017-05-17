@@ -6,7 +6,6 @@ import (
 
 func {{.CommandLine.Command.Name | Title}}(cfg Config) {
     fmt.Println("{{.CommandLine.Command.Name | Title}} Config:", cfg)
-
     {{template "api-middle.tpl" .}}
     {{template "version-middle.tpl" .}}
 }

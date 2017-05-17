@@ -38,6 +38,12 @@ const (
 	DataTypeString           = "string"
 	DataTypeBool             = "bool"
 	DataTypeStringArr        = "[]string"
+	DataTypeIntArr           = "[]int"
+	DataTypeInt32Arr         = "[]int32"
+	DataTypeInt64Arr         = "[]int64"
+	DataTypeFloat32Arr       = "[]float32"
+	DataTypeFloat64Arr       = "[]float64"
+	DataTypeBoolArr          = "[]bool"
 )
 
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
@@ -361,7 +367,9 @@ func RemoveUnusedFile(completeFilePath string) {
 		return
 	}
 
-	if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) && bytes.Equal(fileBytes[:7], []byte("package")) {
+	// if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) && bytes.Equal(fileBytes[:7], []byte("package")) {
+	if !bytes.Contains(bytes.TrimSpace(fileBytes), []byte("\n")) {
+		fmt.Println("Removing:", completeFilePath)
 		if err := os.Remove(completeFilePath); err != nil {
 			// Fail silently.. not a big deal
 			return
@@ -483,7 +491,24 @@ func GetDereferenceFunc(outputType string) (out string) {
 	switch outputType {
 	case DataTypeStringArr:
 		return "dereferenceStringArray"
+	case DataTypeIntArr:
+		return "dereferenceIntArray"
+	case DataTypeInt32Arr:
+		return "dereferenceInt32Array"
+	case DataTypeInt64Arr:
+		return "dereferenceInt64Array"
+	case DataTypeFloat32Arr:
+		return "dereferenceFloat32Array"
+	case DataTypeFloat64Arr:
+		return "dereferenceFloat64Array"
+	case DataTypeBoolArr:
+		return "dereferenceBoolArray"
 	}
 
 	return "*"
+}
+
+func GetProjectFolder(cfg Config) (projectFolder string) {
+	splitPath := strings.Split(cfg.MainImportPath, "/")
+	return splitPath[len(splitPath)-1]
 }
