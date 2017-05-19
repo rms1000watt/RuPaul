@@ -3,6 +3,7 @@ Middlewares:
     Options: 
     - Key: Hosts
       Value: '"localhost", "127.0.0.1", "www.example.com"' # TODO: Handle this better/less foolishly
+      # Value: [localhost, "127.0.0.1", www.example.com]
 
 APIs:
   Rest1:
@@ -57,6 +58,7 @@ APIs:
             - Age
             - GroceryList
             - AgeList
+            - Planet
             Connector: postgres1
             Outputs:
             - FirstName
@@ -64,4 +66,5 @@ APIs:
             - Age
             - GroceryList
             - AgeList
+            - Planet
             

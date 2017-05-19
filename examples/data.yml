@@ -57,3 +57,14 @@ Data:
     Type: string
   ShowTime:
     Type: string
+  Planet:
+    Type: Planet
+  Name:
+    Type: string
+  Radius:
+    Type: float64
+
+Structs:
+  Planet:
+    - Name
+    - Radius

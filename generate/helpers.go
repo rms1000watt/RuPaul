@@ -49,13 +49,14 @@ const (
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 	apiName := toUpperCamelCase(cfg.CommandLine.Commands[commandName].API)
 	templateAPI := yamlToTemplateAPI(cfg.APIs[apiName], cfg)
+	structs := yamlToTemplateStructs(cfg)
 
 	sCfg = TemplateConfig{
 		Version:         cfg.Version,
 		MainImportPath:  cfg.MainImportPath,
 		CopyrightHolder: cfg.CopyrightHolder,
 		API:             templateAPI,
-		// Middlewares:     map[string]TemplateMiddleware{},
+		Structs:         structs,
 		CommandLine: TemplateCommandLine{
 			AppName:             cfg.CommandLine.AppName,
 			AppLongDescription:  cfg.CommandLine.AppLongDescription,
@@ -63,6 +64,18 @@ func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 			GlobalArgs:          cfg.CommandLine.GlobalArgs,
 			Command:             cfg.CommandLine.Commands[commandName],
 		},
+	}
+	return
+}
+
+func yamlToTemplateStructs(cfg Config) (structs map[string][]Data) {
+	structs = map[string][]Data{}
+	for k, datas := range cfg.Structs {
+		structData := []Data{}
+		for _, v := range datas {
+			structData = append(structData, cfg.Datas[v])
+		}
+		structs[k] = structData
 	}
 	return
 }
@@ -172,7 +185,7 @@ func massageData(name string, in Data) (out Data) {
 
 	// Fill in Defaults
 	if out.Type == "" {
-		out.Type = typeString
+		out.Type = DataTypeString
 	}
 
 	return
@@ -241,11 +254,11 @@ func GenValidationStr(in Data) (out string) {
 		out += ValidateStrOnlyHaveChars + "=" + in.OnlyHaveChars + ","
 	}
 
-	if (in.Type == typeFloat || in.Type == typeInt) && in.GreaterThan != nil {
+	if in.GreaterThan != nil && (in.Type == DataTypeFloat32 || in.Type == DataTypeFloat64 || in.Type == DataTypeInt || in.Type == DataTypeInt32 || in.Type == DataTypeInt64) {
 		out += ValidateStrGreaterThan + "=" + cast.ToString(in.GreaterThan) + ","
 	}
 
-	if (in.Type == typeFloat || in.Type == typeInt) && in.LessThan != nil {
+	if in.LessThan != nil && (in.Type == DataTypeFloat32 || in.Type == DataTypeFloat64 || in.Type == DataTypeInt || in.Type == DataTypeInt32 || in.Type == DataTypeInt64) {
 		out += ValidateStrLessThan + "=" + cast.ToString(in.LessThan) + ","
 	}
 
@@ -253,7 +266,7 @@ func GenValidationStr(in Data) (out string) {
 }
 
 func HandleQuotes(value, typeStr string) string {
-	if strings.ToLower(typeStr) == typeString {
+	if strings.ToLower(typeStr) == DataTypeString {
 		return `"` + value + `"`
 	}
 	return value
@@ -270,6 +283,10 @@ func OutputInInputs(outputName string, inputs []Data) bool {
 		}
 	}
 	return false
+}
+
+func NotOutputInInputs(outputName string, inputs []Data) bool {
+	return !OutputInInputs(outputName, inputs)
 }
 
 func EmptyValue(dataType string) (out string) {
@@ -294,7 +311,7 @@ func EmptyValue(dataType string) (out string) {
 		return "false"
 	}
 	fmt.Println("DATA TYPE NOT DEFINED:", dataType)
-	return "\"\""
+	return dataType + "{}"
 }
 
 // Courtesy of https://github.com/etgryphon/stringUp/blob/master/stringUp.go
@@ -511,4 +528,21 @@ func GetDereferenceFunc(outputType string) (out string) {
 func GetProjectFolder(cfg Config) (projectFolder string) {
 	splitPath := strings.Split(cfg.MainImportPath, "/")
 	return splitPath[len(splitPath)-1]
+}
+
+func IsStruct(dataType string) (isStruct bool) {
+	return !(dataType == DataTypeFloat32 ||
+		dataType == DataTypeFloat64 ||
+		dataType == DataTypeInt ||
+		dataType == DataTypeInt32 ||
+		dataType == DataTypeInt64 ||
+		dataType == DataTypeString ||
+		dataType == DataTypeBool ||
+		dataType == DataTypeStringArr ||
+		dataType == DataTypeIntArr ||
+		dataType == DataTypeInt32Arr ||
+		dataType == DataTypeInt64Arr ||
+		dataType == DataTypeFloat32Arr ||
+		dataType == DataTypeFloat64Arr ||
+		dataType == DataTypeBoolArr)
 }

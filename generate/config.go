@@ -11,6 +11,7 @@ type Config struct {
 	CommandLine     CommandLine           `yaml:"CommandLine"`
 	Middlewares     map[string]Middleware `yaml:"Middlewares"`
 	Imports         []string              `yaml:"Imports"`
+	Structs         map[string][]string   `yaml:"Structs"`
 	// Connectors      map[string]Connector `yaml:"Connector"`
 }
 
@@ -102,6 +103,7 @@ type TemplateConfig struct {
 	CopyrightHolder string
 	API             TemplateAPI
 	CommandLine     TemplateCommandLine
+	Structs         map[string][]Data
 }
 
 type TemplateCommandLine struct {

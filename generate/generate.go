@@ -22,14 +22,33 @@ const (
 	dirHelpers   = "helpers"
 	dirCmd       = "cmd"
 	extTpl       = ".tpl"
-	typeString   = "string"
-	typeBool     = "bool"
-	typeFloat    = "float"
-	typeInt      = "int"
 )
 
 var (
 	errGenFail = errors.New("Failed generating project")
+	funcMap    = template.FuncMap{
+		"ToLower":              strings.ToLower,
+		"Title":                strings.Title,
+		"ToUpper":              strings.ToUpper,
+		"TimeNowYear":          time.Now().Year,
+		"GenValidationStr":     GenValidationStr,
+		"GenTransformStr":      GenTransformStr,
+		"HandleQuotes":         HandleQuotes,
+		"ToSnakeCase":          ToSnakeCase,
+		"ToCamelCase":          ToCamelCase,
+		"OutputInInputs":       OutputInInputs,
+		"NotOutputInInputs":    NotOutputInInputs,
+		"EmptyValue":           EmptyValue,
+		"GetHTTPMethod":        GetHTTPMethod,
+		"CopyCertsPath":        CopyCertsPath,
+		"FallbackSet":          FallbackSet,
+		"GetMethodMiddlewares": GetMethodMiddlewares,
+		"GetPathMiddlewares":   GetPathMiddlewares,
+		"GetInputType":         GetInputType,
+		"GetDereferenceFunc":   GetDereferenceFunc,
+		"GetProjectFolder":     GetProjectFolder,
+		"IsStruct":             IsStruct,
+	}
 )
 
 type Template struct {
@@ -205,28 +224,6 @@ func genFile(tpl Template, helperFileNames []string) (err error) {
 	if len(templateNameArr) < 3 {
 		fmt.Println("Bad templateName provided:", templateName)
 		return errGenFail
-	}
-
-	funcMap := template.FuncMap{
-		"ToLower":              strings.ToLower,
-		"Title":                strings.Title,
-		"ToUpper":              strings.ToUpper,
-		"TimeNowYear":          time.Now().Year,
-		"GenValidationStr":     GenValidationStr,
-		"GenTransformStr":      GenTransformStr,
-		"HandleQuotes":         HandleQuotes,
-		"ToSnakeCase":          ToSnakeCase,
-		"ToCamelCase":          ToCamelCase,
-		"OutputInInputs":       OutputInInputs,
-		"EmptyValue":           EmptyValue,
-		"GetHTTPMethod":        GetHTTPMethod,
-		"CopyCertsPath":        CopyCertsPath,
-		"FallbackSet":          FallbackSet,
-		"GetMethodMiddlewares": GetMethodMiddlewares,
-		"GetPathMiddlewares":   GetPathMiddlewares,
-		"GetInputType":         GetInputType,
-		"GetDereferenceFunc":   GetDereferenceFunc,
-		"GetProjectFolder":     GetProjectFolder,
 	}
 
 	templateFileName := filepath.Join(dirTemplates, tpl.FileName)

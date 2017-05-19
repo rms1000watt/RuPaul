@@ -62,7 +62,7 @@ https://localhost:8080/person?first_name=ryan&last_name=smith&age=88
 
 ### TODO:
 
-- [] Handle array data types
+- [x] Handle array data types
 - [] Handle struct data types (nested structs)
 - [] Docs, docs, docs
 - [] Config sanitization
