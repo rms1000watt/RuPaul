@@ -47,6 +47,7 @@ const (
 )
 
 func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
+	cfg = addNamesToData(cfg)
 	apiName := toUpperCamelCase(cfg.CommandLine.Commands[commandName].API)
 	templateAPI := yamlToTemplateAPI(cfg.APIs[apiName], cfg)
 	structs := yamlToTemplateStructs(cfg)
@@ -68,6 +69,18 @@ func yamlToTemplateCfg(cfg Config, commandName string) (sCfg TemplateConfig) {
 	return
 }
 
+func addNamesToData(cfg Config) Config {
+	for k, v := range cfg.Datas {
+		v.Name = k
+		if v.DisplayName == "" {
+			v.DisplayName = ToSnakeCase(k)
+		}
+		cfg.Datas[k] = v
+	}
+
+	return cfg
+}
+
 func yamlToTemplateStructs(cfg Config) (structs map[string][]Data) {
 	structs = map[string][]Data{}
 	for k, datas := range cfg.Structs {
@@ -77,6 +90,7 @@ func yamlToTemplateStructs(cfg Config) (structs map[string][]Data) {
 		}
 		structs[k] = structData
 	}
+
 	return
 }
 
@@ -545,4 +559,54 @@ func IsStruct(dataType string) (isStruct bool) {
 		dataType == DataTypeFloat32Arr ||
 		dataType == DataTypeFloat64Arr ||
 		dataType == DataTypeBoolArr)
+}
+
+func GetStructFields(structs map[string][]Data, structName string) (structFields string) {
+	datas := structs[structName]
+	for _, data := range datas {
+		structFields += fmt.Sprintf("%s %s `%s %s %s`\n", data.Name, GetInputType(data.Type), GetJSONTag(data), GetValidateTag(data), GetTransformTag(data))
+	}
+
+	return
+}
+
+func GetJSONTag(data Data) (jsonTag string) {
+	return fmt.Sprintf("json:\"%s,omitempty\"", data.DisplayName)
+}
+
+func GetValidateTag(data Data) (validateTag string) {
+	return fmt.Sprintf("validate:\"%s\"", GenValidationStr(data))
+}
+
+func GetTransformTag(data Data) (transformTag string) {
+	return fmt.Sprintf("transform:\"%s\"", GenTransformStr(data))
+}
+
+func getStructStr(name, fields string) string {
+	return fmt.Sprintf(`
+			type %s struct {
+				%s
+			}
+			`, name, fields)
+}
+
+func GetStructs(datas []Data, structs map[string][]Data) (allStructs string) {
+	for _, data := range datas {
+		if IsStruct(data.Type) {
+			allStructs += getStructStr(data.Name, GetStructFields(structs, data.Name))
+			allStructs += GetStructs(structs[data.Name], structs)
+		}
+	}
+	return
+}
+
+// {{GetStructs $method.Inputs $.Structs}}
+func GetStructs2(inputs []Data, outputs []Data, structs map[string][]Data) (allStructs string) {
+	for _, output := range outputs {
+		if NotOutputInInputs(output.Name, inputs) {
+			inputs = append(inputs, output)
+		}
+	}
+
+	return GetStructs(inputs, structs)
 }

@@ -63,8 +63,47 @@ Data:
     Type: string
   Radius:
     Type: float64
+  Continent:
+    Type: Continent
+  Country:
+    Type: Country
+  State:
+    Type: State
+  City:
+    Type: City
+  Population:
+    Type: int
+  Animal:
+    Type: Animal
+  Limb:
+    Type: Limb
+  Quantity:
+    Type: int
+
 
 Structs:
   Planet:
     - Name
     - Radius
+    - Continent
+  Continent:
+    - Name
+    - Population
+    - Country
+  Country:
+    - Name
+    - Population
+    - State
+  State:
+    - Name 
+    - Population
+    - City
+  City:
+    - Name
+    - Population
+  Animal:
+    - Name
+    - Limb
+  Limb:
+    - Name
+    - Quantity

@@ -48,6 +48,9 @@ var (
 		"GetDereferenceFunc":   GetDereferenceFunc,
 		"GetProjectFolder":     GetProjectFolder,
 		"IsStruct":             IsStruct,
+		"GetStructFields":      GetStructFields,
+		"GetStructs":           GetStructs,
+		"GetStructs2":          GetStructs2,
 	}
 )
 

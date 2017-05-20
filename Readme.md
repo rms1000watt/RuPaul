@@ -50,6 +50,7 @@ curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"StarStar
 
 # Success
 curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword"}' --insecure https://localhost:8080/person
+curl -X POST -d '{"first_name":"ChetChetChetChet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","planet":{"name":"earth"}}' --insecure https://localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world"}' --insecure https://localhost:8080/person
 curl -X POST -d '{"first_name":"Chet","middle_name":"Darf","last_name":"Star","age":33,"account":123.123,"password":"pASSword","gossip":"hello world","grocery_list":["pigs","blanket"],"age_list":[3,5,1]}' --insecure https://localhost:8080/person
 curl --insecure 'https://localhost:8080/person?first_name=ryan&last_name=smith&age=88'
@@ -63,7 +64,10 @@ https://localhost:8080/person?first_name=ryan&last_name=smith&age=88
 ### TODO:
 
 - [x] Handle array data types
-- [] Handle struct data types (nested structs)
+- [x] Handle struct data types
+- [] Handle nested structs
+- [] Validation of structs and nested structs
+- [] Transformation of structs and nested structs
 - [] Docs, docs, docs
 - [] Config sanitization
 - [] Template cleanup (use functions to format var names instead of in-template)

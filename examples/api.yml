@@ -66,5 +66,6 @@ APIs:
             - Age
             - GroceryList
             - AgeList
-            - Planet
+            - State
+            - Animal
             

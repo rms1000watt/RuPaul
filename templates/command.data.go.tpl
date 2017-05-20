@@ -12,14 +12,7 @@ type {{$path.Name | Title}}Output{{$method.Name | ToUpper}} struct {
     {{end}}
 }
 
-{{range $input := $method.Inputs}}{{if IsStruct $input.Type}}type {{$input.Name}} struct {
-	
-}{{end}}{{end}}
-
-{{range $output := $method.Outputs}}{{if and (IsStruct $output.Type) (NotOutputInInputs $output.Name $method.Inputs)}}type {{$output.Name}} struct {
-
-}{{end}}{{end}}
-
+{{GetStructs2 $method.Inputs $method.Outputs $.Structs}}
 {{end}}
 {{end}}
 
